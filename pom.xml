@@ -31,6 +31,8 @@
 		<spring-modulith.version>2.1.1</spring-modulith.version>
 	</properties>
 	<dependencies>
+
+<!--		Modulith dependencies-->
 		<dependency>
 			<groupId>org.springframework.modulith</groupId>
 			<artifactId>spring-modulith-observability-api</artifactId>
@@ -42,6 +44,11 @@
 		<dependency>
 			<groupId>org.springframework.modulith</groupId>
 			<artifactId>spring-modulith-starter-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.modulith</groupId>
+			<artifactId>spring-modulith-observability-core</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 
 		<dependency>
@@ -62,9 +69,10 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.modulith</groupId>
-			<artifactId>spring-modulith-observability-core</artifactId>
-			<scope>runtime</scope>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+			<version>4.1.1</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
