@@ -1,10 +1,13 @@
 package com.elevata.marketplace.product.domain;
 
+import com.elevata.marketplace.product.ProductResponse;
 import com.elevata.marketplace.product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -53,5 +56,15 @@ public class ProductServiceImpl implements ProductService {
         }
 
         throw new InvalidProductStatusException("Invalid status");
+    }
+
+    @Override
+    public Page<ProductResponse> getAvailableProducts(List<Long> availableProductIds,
+                                                      int pageNumber,
+                                                      int catalogPageSize
+    ) {
+        return productRepository
+                .findAllProductsByIdUsingIn(availableProductIds,
+                        PageRequest.of(pageNumber, catalogPageSize));
     }
 }

@@ -1,7 +1,6 @@
 package com.elevata.marketplace.stock;
 
 import com.elevata.marketplace.stock.domain.AddStockForProduct;
-import com.elevata.marketplace.stock.domain.StockResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -12,4 +11,6 @@ public interface StockService {
     Page<StockResponse> getProductStock(int pageNumber);
 
     StockResponse updatePriceOrStatus(Long stockId, Integer units, String status);
+
+    Page<StockResponse> getAvailableStock(int pageNumber, int catalogPageSize);
 }

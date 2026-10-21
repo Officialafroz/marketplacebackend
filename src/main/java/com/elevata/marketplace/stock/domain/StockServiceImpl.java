@@ -1,6 +1,8 @@
 package com.elevata.marketplace.stock.domain;
 
+import com.elevata.marketplace.stock.StockResponse;
 import com.elevata.marketplace.stock.StockService;
+import com.elevata.marketplace.stock.StockStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class StockServiceImpl implements StockService {
-    private static final int PRODUCT_PAGE_SIZE = 30;
     private static final Logger log = LoggerFactory.getLogger(StockServiceImpl.class);
+    private static final int PRODUCT_PAGE_SIZE = 30;
     private final StockRepository stockRepository;
 
     @Autowired
@@ -52,7 +54,8 @@ public class StockServiceImpl implements StockService {
     @Transactional
     public StockResponse updatePriceOrStatus(Long stockId, Integer units, String status) {
         Stock s = stockRepository.findById(stockId)
-                .orElseThrow(() -> new StockNotFoundException("Stock not found for id " + stockId));
+                .orElseThrow(() -> new StockNotFoundException(
+                        "Stock not found for id " + stockId));
 
         if (units != null) {
             s.setUnits(units);
@@ -66,7 +69,7 @@ public class StockServiceImpl implements StockService {
             s.setStockStatus(StockStatus.valueOf(status.toUpperCase()));
         }
 
-        log.info("--------------------------------- Stock status: {} %s", status);
+        log.info("--------------------------------- Stock status: {}", status);
 
         s = stockRepository.save(s);
 
@@ -79,5 +82,10 @@ public class StockServiceImpl implements StockService {
                 s.getStockStatus(),
                 s.getCreatedAt(),
                 s.getUpdatedAt());
+    }
+
+    @Override
+    public Page<StockResponse> getAvailableStock(int pageNumber, int catalogPageSize) {
+        return stockRepository.getAvailableStock(PageRequest.of(pageNumber, catalogPageSize));
     }
 }

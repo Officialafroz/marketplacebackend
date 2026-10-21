@@ -1,6 +1,4 @@
-package com.elevata.marketplace.stock.domain;
-
-import com.elevata.marketplace.stock.StockStatus;
+package com.elevata.marketplace.stock;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
