@@ -1,4 +1,4 @@
-package com.elevata.marketplace.stock.domain;
+package com.elevata.marketplace.stock;
 
 public enum StockStatus {
     AVAILABLE,

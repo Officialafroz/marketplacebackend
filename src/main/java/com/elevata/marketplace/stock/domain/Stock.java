@@ -1,5 +1,6 @@
 package com.elevata.marketplace.stock.domain;
 
+import com.elevata.marketplace.stock.StockStatus;
 import jakarta.persistence.*;
 import org.hibernate.annotations.DynamicInsert;
 

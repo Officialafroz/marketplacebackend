@@ -1,10 +1,9 @@
 package com.elevata.marketplace.product.web.controller;
 
+import com.elevata.marketplace.product.ProductResponse;
 import com.elevata.marketplace.product.ProductService;
 import com.elevata.marketplace.product.domain.AddProduct;
-import com.elevata.marketplace.product.domain.ProductResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;

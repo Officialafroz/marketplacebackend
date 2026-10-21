@@ -1,8 +1,8 @@
 package com.elevata.marketplace.stock.web.controller;
 
+import com.elevata.marketplace.stock.StockResponse;
 import com.elevata.marketplace.stock.StockService;
 import com.elevata.marketplace.stock.domain.AddStockForProduct;
-import com.elevata.marketplace.stock.domain.StockResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
