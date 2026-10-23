@@ -15,11 +15,13 @@ public class AuthServiceImpl implements AuthService {
     private static final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
     private final ApplicationEventPublisher eventPublisher;
     private final AppUserService appUserService;
+    private final OtpService otpService;
 
     @Autowired
-    public AuthServiceImpl(ApplicationEventPublisher eventPublisher, AppUserService appUserService) {
+    public AuthServiceImpl(ApplicationEventPublisher eventPublisher, AppUserService appUserService, OtpService otpService) {
         this.eventPublisher = eventPublisher;
         this.appUserService = appUserService;
+        this.otpService = otpService;
     }
 
     @Override
@@ -32,5 +34,30 @@ public class AuthServiceImpl implements AuthService {
         }
 
         return "App user already exists for email " + appUser.email();
+    }
+
+    @Override
+    @Transactional
+    public String login(OtpEmailRequest otpEmailRequest) {
+        if (!appUserService.validateUser(otpEmailRequest.email())) {
+            return "User does not exist for email " + otpEmailRequest.email();
+        }
+
+        otpService.create(otpEmailRequest.email());
+
+        return "Otp generated for email " + otpEmailRequest.email();
+    }
+
+    @Override
+    public String verify(OtpRequest otpRequest) {
+        if (!appUserService.validateUser(otpRequest.email())) {
+            return "User does not exist for email " + otpRequest.email();
+        }
+
+        if (!otpService.verifyOtp(otpRequest)) {
+            return "Invalid OTP";
+        }
+
+        return "User authorized.";
     }
 }

@@ -1,6 +1,8 @@
 package com.elevata.marketplace.auth.web.controller;
 
 import com.elevata.marketplace.auth.AuthService;
+import com.elevata.marketplace.auth.domain.OtpEmailRequest;
+import com.elevata.marketplace.auth.domain.OtpRequest;
 import com.elevata.marketplace.user.AddAppUser;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,5 +25,15 @@ public class AuthController {
     @PostMapping("register/customer")
     public String registerCustomer(@Valid @RequestBody AddAppUser appUser) {
         return authService.registerCustomer(appUser);
+    }
+
+    @PostMapping("login")
+    public String login(@Valid @RequestBody OtpEmailRequest otpEmailRequest) {
+        return authService.login(otpEmailRequest);
+    }
+
+    @PostMapping("verify/otp")
+    public String verify(@Valid @RequestBody OtpRequest otpRequest) {
+        return authService.verify(otpRequest);
     }
 }
