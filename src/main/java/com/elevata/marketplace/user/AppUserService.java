@@ -6,4 +6,6 @@ import org.springframework.stereotype.Service;
 public interface AppUserService {
     void save(AddAppUser appUser);
     boolean validateUser(String email);
+
+    Long getIdByEmail(String email);
 }
