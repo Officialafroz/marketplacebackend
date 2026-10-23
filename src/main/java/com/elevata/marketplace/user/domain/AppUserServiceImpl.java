@@ -1,7 +1,7 @@
 package com.elevata.marketplace.user.domain;
 
-import com.elevata.marketplace.auth.AddAppUser;
-import com.elevata.marketplace.auth.AppUserRole;
+import com.elevata.marketplace.user.AddAppUser;
+import com.elevata.marketplace.user.AppUserRole;
 import com.elevata.marketplace.user.AppUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,12 @@ public class AppUserServiceImpl implements AppUserService {
                 appUser.phoneNumber(),
                 AppUserRole.valueOf(appUser.role().toUpperCase()));
 
-        u = appUserRepository.save(u);
-        log.info("[From the event] AppUser is saved : {}", u);
+        appUserRepository.save(u);
+        log.info("[From the save] AppUser is saved : {}", u);
+    }
+
+    @Override
+    public boolean validateUser(String email) {
+        return appUserRepository.existsByEmail(email);
     }
 }

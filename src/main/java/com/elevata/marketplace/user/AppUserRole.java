@@ -1,4 +1,4 @@
-package com.elevata.marketplace.auth;
+package com.elevata.marketplace.user;
 
 public enum AppUserRole {
     CUSTOMER,

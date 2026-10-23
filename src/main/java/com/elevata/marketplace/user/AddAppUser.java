@@ -1,6 +1,6 @@
-package com.elevata.marketplace.auth;
+package com.elevata.marketplace.user;
 
-import com.elevata.marketplace.auth.validations.ValidEmail;
+import com.elevata.marketplace.validations.ValidEmail;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 

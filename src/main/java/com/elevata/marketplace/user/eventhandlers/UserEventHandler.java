@@ -1,6 +1,6 @@
 package com.elevata.marketplace.user.eventhandlers;
 
-import com.elevata.marketplace.auth.AddAppUser;
+import com.elevata.marketplace.user.AddAppUser;
 import com.elevata.marketplace.user.AppUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

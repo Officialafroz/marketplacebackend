@@ -1,10 +1,10 @@
 package com.elevata.marketplace.auth;
 
-import com.elevata.marketplace.auth.domain.UserResponse;
+import com.elevata.marketplace.user.AddAppUser;
 import org.springframework.stereotype.Service;
 
 @Service
 public interface AuthService {
 
-    UserResponse registerCustomer(AddAppUser appUser);
+    String registerCustomer(AddAppUser appUser);
 }

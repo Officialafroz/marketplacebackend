@@ -1,6 +1,6 @@
 package com.elevata.marketplace.user.domain;
 
-import com.elevata.marketplace.auth.AppUserRole;
+import com.elevata.marketplace.user.AppUserRole;
 import jakarta.persistence.*;
 import org.hibernate.annotations.DynamicInsert;
 

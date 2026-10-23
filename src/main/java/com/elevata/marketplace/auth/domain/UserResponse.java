@@ -1,6 +1,6 @@
 package com.elevata.marketplace.auth.domain;
 
-import com.elevata.marketplace.auth.AppUserRole;
+import com.elevata.marketplace.user.AppUserRole;
 
 import java.time.LocalDateTime;
 

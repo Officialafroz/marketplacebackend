@@ -1,6 +1,6 @@
-package com.elevata.marketplace.auth.validations;
+package com.elevata.marketplace.validations;
 
-
+import com.elevata.marketplace.validations.validators.EmailValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 

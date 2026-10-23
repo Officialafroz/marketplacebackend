@@ -1,8 +1,7 @@
 package com.elevata.marketplace.auth.web.controller;
 
-import com.elevata.marketplace.auth.AddAppUser;
 import com.elevata.marketplace.auth.AuthService;
-import com.elevata.marketplace.auth.domain.UserResponse;
+import com.elevata.marketplace.user.AddAppUser;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +21,7 @@ public class AuthController {
     }
 
     @PostMapping("register/customer")
-    public UserResponse registerCustomer(@Valid @RequestBody AddAppUser appUser) {
+    public String registerCustomer(@Valid @RequestBody AddAppUser appUser) {
         return authService.registerCustomer(appUser);
     }
 }
