@@ -1,6 +1,7 @@
 package com.elevata.marketplace.user.domain;
 
 import com.elevata.marketplace.user.AddAppUser;
+import com.elevata.marketplace.user.AppUserDto;
 import com.elevata.marketplace.user.AppUserRole;
 import com.elevata.marketplace.user.AppUserService;
 import org.slf4j.Logger;
@@ -39,5 +40,10 @@ public class AppUserServiceImpl implements AppUserService {
     @Override
     public Long getIdByEmail(String email) {
         return appUserRepository.getIdByEmail(email);
+    }
+
+    @Override
+    public AppUserDto findByEmail(String email) {
+        return appUserRepository.findByEmail(email);
     }
 }
