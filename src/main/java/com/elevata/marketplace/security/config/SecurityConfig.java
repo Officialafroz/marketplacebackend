@@ -39,6 +39,9 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**", "/").permitAll()
                         .requestMatchers("/api/seller/**").hasAuthority(AppUserRole.SELLER.name())
                         .requestMatchers("/api/customer/**").hasAuthority(AppUserRole.CUSTOMER.name())
+                .requestMatchers("/api/logout").hasAnyAuthority(AppUserRole.CUSTOMER.name(),
+                                AppUserRole.SELLER.name(),
+                                AppUserRole.ADMIN.name())
                         .anyRequest().authenticated())
                 .build();
     }
