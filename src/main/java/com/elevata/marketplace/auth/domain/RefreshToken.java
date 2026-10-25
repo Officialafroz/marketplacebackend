@@ -20,6 +20,9 @@ public class RefreshToken {
     private Long appUserId;
     private LocalDateTime createdAt;
 
+    public RefreshToken() {
+    }
+
     public RefreshToken(String token, Instant expiresAt, Long appUserId) {
         this.token = token;
         this.expiresAt = expiresAt;
