@@ -11,4 +11,6 @@ public interface AppUserService {
     Long getIdByEmail(String email);
 
     AppUserDto findByEmail(String email);
+
+    boolean validateById(Long id);
 }

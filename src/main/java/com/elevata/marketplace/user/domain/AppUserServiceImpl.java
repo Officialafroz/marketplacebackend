@@ -38,6 +38,11 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
+    public boolean validateById(Long id) {
+        return appUserRepository.existsById(id);
+    }
+
+    @Override
     public Long getIdByEmail(String email) {
         return appUserRepository.getIdByEmail(email);
     }
