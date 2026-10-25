@@ -1,5 +1,6 @@
 package com.elevata.marketplace.security.internal;
 
+import com.elevata.marketplace.security.JwtProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.RequiredTypeException;
 import jakarta.servlet.FilterChain;

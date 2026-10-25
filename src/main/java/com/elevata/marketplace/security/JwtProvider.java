@@ -1,6 +1,5 @@
-package com.elevata.marketplace.security.internal;
+package com.elevata.marketplace.security;
 
-import com.elevata.marketplace.user.domain.AppUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
