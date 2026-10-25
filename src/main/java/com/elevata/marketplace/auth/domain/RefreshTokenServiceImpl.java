@@ -1,21 +1,27 @@
 package com.elevata.marketplace.auth.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Base64;
 
 @Service
 public class RefreshTokenServiceImpl implements RefreshTokenService {
-    private static final int REFRESH_TOKEN_EXPIRATION_DAYS = 7;
+    private final Duration refreshTokenExpiration;
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Autowired
-    public RefreshTokenServiceImpl(RefreshTokenRepository refreshTokenRepository) {
+    public RefreshTokenServiceImpl(
+            RefreshTokenRepository refreshTokenRepository,
+            @Value("${refresh-token.expiration}") Duration refreshTokenExpiration
+    ) {
         this.refreshTokenRepository = refreshTokenRepository;
+        this.refreshTokenExpiration = refreshTokenExpiration;
     }
 
     @Override
@@ -26,7 +32,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         secureRandom.nextBytes(bytes);
         String newToken = Base64.getUrlEncoder().withoutPadding()
                 .encodeToString(bytes);
-        LocalDateTime expiresAt = LocalDateTime.now().plusDays(REFRESH_TOKEN_EXPIRATION_DAYS);
+        Instant expiresAt = Instant.now().plus(refreshTokenExpiration);
 
         return refreshTokenRepository.findByAppUserId(appUserId)
                 .map(existing -> {
@@ -50,7 +56,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
                 .orElseThrow(() -> new RefreshTokenNotFoundException("Invalid refresh token."));
 
-        if (refreshToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+        if (Instant.now().isAfter(refreshToken.getExpiresAt())) {
             refreshTokenRepository.delete(refreshToken);
             throw new RefreshTokenExpiredException("Refresh token expired.");
         }

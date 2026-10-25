@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import org.hibernate.annotations.DynamicInsert;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,11 +16,11 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long refreshTokenId;
     private String token;
-    private LocalDateTime expiresAt;
+    private Instant expiresAt;
     private Long appUserId;
     private LocalDateTime createdAt;
 
-    public RefreshToken(String token, LocalDateTime expiresAt, Long appUserId) {
+    public RefreshToken(String token, Instant expiresAt, Long appUserId) {
         this.token = token;
         this.expiresAt = expiresAt;
         this.appUserId = appUserId;
@@ -33,11 +34,11 @@ public class RefreshToken {
         this.token = token;
     }
 
-    public LocalDateTime getExpiresAt() {
+    public Instant getExpiresAt() {
         return expiresAt;
     }
 
-    public void setExpiresAt(LocalDateTime expiresAt) {
+    public void setExpiresAt(Instant expiresAt) {
         this.expiresAt = expiresAt;
     }
 
