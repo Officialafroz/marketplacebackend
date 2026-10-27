@@ -51,4 +51,9 @@ public class AppUserServiceImpl implements AppUserService {
     public AppUserDto findByEmail(String email) {
         return appUserRepository.findByEmail(email);
     }
+
+    @Override
+    public AppUserDto findById(long id) {
+        return appUserRepository.findByAppUserId(id);
+    }
 }

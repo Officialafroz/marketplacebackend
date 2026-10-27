@@ -19,4 +19,11 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
         WHERE u.email = :email
     """)
     AppUserDto findByEmail(@Param("email") String email);
+
+    @Query("""
+        SELECT new com.elevata.marketplace.user.AppUserDto(u.appUserId, u.role)
+        FROM AppUser u
+        WHERE u.appUserId = :appUserId
+    """)
+    AppUserDto findByAppUserId(@Param("appUserId") long appUserId);
 }

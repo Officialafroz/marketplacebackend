@@ -13,4 +13,6 @@ public interface AppUserService {
     AppUserDto findByEmail(String email);
 
     boolean validateById(Long id);
+
+    AppUserDto findById(long id);
 }
