@@ -3,7 +3,7 @@ package com.elevata.marketplace.address.domain;
 class AddressMapper {
     public AddressMapper() {}
 
-    public static AddressResponse convertToDto(Address entity) {
+    public static AddressResponse toDto(Address entity) {
         return new AddressResponse(entity.getAddressId(),
                 entity.getStreet(),
                 entity.getSociety(),
@@ -14,7 +14,7 @@ class AddressMapper {
                 entity.getAppUserId());
     }
 
-    public static Address convertToEntity(AddressRequest request, Long appUserId) {
+    public static Address toEntity(AddressRequest request, Long appUserId) {
         return new Address(request.street(),
                 request.society(),
                 request.townVillageCity(),

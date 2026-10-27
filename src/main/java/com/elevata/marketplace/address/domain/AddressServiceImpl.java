@@ -31,10 +31,10 @@ public class AddressServiceImpl implements AddressService {
             throw new InvalidCountryException("Invalid country " + addressRequest.country());
         }
 
-        Address address = AddressMapper.convertToEntity(addressRequest, appUserId);
+        Address address = AddressMapper.toEntity(addressRequest, appUserId);
 
         address = addressRepository.save(address);
-        return AddressMapper.convertToDto(address);
+        return AddressMapper.toDto(address);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class AddressServiceImpl implements AddressService {
         }
 
         address = addressRepository.save(address);
-        return AddressMapper.convertToDto(address);
+        return AddressMapper.toDto(address);
     }
 
     private boolean checkNull(String value) throws NullPointerException {

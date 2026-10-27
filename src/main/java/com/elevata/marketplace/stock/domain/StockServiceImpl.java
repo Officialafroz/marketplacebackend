@@ -25,23 +25,10 @@ public class StockServiceImpl implements StockService {
     @Override
     @Transactional
     public StockResponse add(AddStockForProduct stock) {
-        Stock s = new Stock(stock.units(),
-                stock.price(),
-                stock.manufacturingDate(),
-                stock.expiryDate(),
-                stock.productId());
-
+        Stock s = StockMapper.toEntity(stock);
         s = stockRepository.save(s);
 
-        return new StockResponse(s.getStockId(),
-                s.getProductId(),
-                s.getUnits(),
-                s.getPrice(),
-                s.getManufacturingDate(),
-                s.getExpiryDate(),
-                s.getStockStatus() == null ? StockStatus.OUT_OF_STOCK : s.getStockStatus(),
-                s.getCreatedAt(),
-                s.getUpdatedAt());
+        return StockMapper.convertToDto(s);
     }
 
     @Override
@@ -73,15 +60,7 @@ public class StockServiceImpl implements StockService {
 
         s = stockRepository.save(s);
 
-        return new StockResponse(s.getStockId(),
-                s.getProductId(),
-                s.getUnits(),
-                s.getPrice(),
-                s.getManufacturingDate(),
-                s.getExpiryDate(),
-                s.getStockStatus(),
-                s.getCreatedAt(),
-                s.getUpdatedAt());
+        return StockMapper.convertToDto(s);
     }
 
     @Override

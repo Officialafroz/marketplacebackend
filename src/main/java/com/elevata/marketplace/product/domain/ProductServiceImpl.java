@@ -21,15 +21,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse save(AddProduct product) {
-        Product p = new Product(product.productName(), product.category());
+        Product p = ProductMapper.toEntity(product);
 //        Why product status as null?
         p = productRepository.save(p);
 
-        return new ProductResponse(p.getProductId(),
-                p.getProductName(),
-                p.getCategory(),
-                p.getProductStatus() == null ?
-                        ProductStatus.UNAVAILABLE : ProductStatus.AVAILABLE);
+        return ProductMapper.toDto(p);
     }
 
     @Override
@@ -49,10 +45,7 @@ public class ProductServiceImpl implements ProductService {
             p.setProductStatus(ProductStatus.valueOf(status.toUpperCase()));
             productRepository.save(p);
 
-            return new ProductResponse(p.getProductId(),
-                    p.getProductName(),
-                    p.getCategory(),
-                    p.getProductStatus());
+            return ProductMapper.toDto(p);
         }
 
         throw new InvalidProductStatusException("Invalid status");
