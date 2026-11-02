@@ -35,13 +35,17 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public String registerCustomer(HttpServletResponse response, AddAppUser appUser) {
+    public String register(HttpServletResponse response, AddAppUser appUser) {
         if (!appUserService.validateUser(appUser.email())) {
-          log.info("[Publishing the save event]", appUser);
-          eventPublisher.publishEvent(appUser);
+//          log.info("[Publishing the save event]", appUser);
+//          eventPublisher.publishEvent(appUser);
+            appUserService.save(appUser);
 
-          AppUserDto appUserDto = appUserService.findByEmail(appUser.email());
-          handleToken(response, appUserDto.appUserId(), appUserDto.role().name());
+            AppUserDto appUserDto = appUserService.findByEmail(appUser.email());
+            /*
+                Why generating access token before validation the otp
+            */
+            handleToken(response, appUserDto.appUserId(), appUserDto.role().name());
 
           return "Account created for user.";
         }

@@ -23,10 +23,10 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("register/customer")
-    public String registerCustomer(HttpServletResponse response,
+    @PostMapping("register")
+    public String register(HttpServletResponse response,
                                    @Valid @RequestBody AddAppUser appUser) {
-        return authService.registerCustomer(response, appUser);
+        return authService.register(response, appUser);
     }
 
     @PostMapping("login")
