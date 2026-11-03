@@ -6,6 +6,7 @@ public record ProductResponse(
         Long productId,
         String productName,
         String category,
-        ProductStatus productStatus
+        ProductStatus productStatus,
+        Long sellerId
 ) {
 }

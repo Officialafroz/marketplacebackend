@@ -11,7 +11,7 @@ public interface ProductService {
 
     ProductResponse save(AddProduct product);
 
-    Page<ProductResponse> getProducts(Long id, int pageNumber);
+    Page<ProductResponse> getProducts(int pageNumber);
 
     ProductResponse updateStatus(Long productId, String status);
 

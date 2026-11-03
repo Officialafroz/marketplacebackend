@@ -15,14 +15,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("""
         SELECT new com.elevata.marketplace.product.ProductResponse(
-            p.productId, p.productName, p.category, p.productStatus)
-        FROM Product p
+            p.productId, p.productName, p.category, p.productStatus, p.sellerId)
+        FROM Product p WHERE p.sellerId = :id
     """)
-    Page<ProductResponse> getProducts(Long id, Pageable pageable);
+    Page<ProductResponse> getProducts(@Param("id") Long id, Pageable pageable);
 
     @Query("""
         SELECT new com.elevata.marketplace.product.ProductResponse(
-            p.productId, p.productName, p.category, p.productStatus)
+            p.productId, p.productName, p.category, p.productStatus, p.sellerId)
         FROM Product p
         WHERE p.productId IN :availableProductIds
     """)

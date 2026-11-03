@@ -18,15 +18,17 @@ public class Product {
 
     @Enumerated(EnumType.STRING)
     private ProductStatus productStatus;
+    private Long sellerId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     public Product() {
     }
 
-    public Product(String productName, String category) {
+    public Product(String productName, String category, Long sellerId) {
         this.productName = productName;
         this.category = category;
+        this.sellerId = sellerId;
     }
 
     public Long getProductId() {
@@ -63,5 +65,13 @@ public class Product {
 
     public void setProductStatus(ProductStatus productStatus) {
         this.productStatus = productStatus;
+    }
+
+    public Long getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(Long sellerId) {
+        this.sellerId = sellerId;
     }
 }

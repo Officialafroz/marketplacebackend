@@ -25,11 +25,9 @@ public class ProductController {
     }
 
     //id is for seller and won't work now
-    @GetMapping("product/{id}/page/{pageNumber}")
-    public Page<ProductResponse> getProducts(@PathVariable Long id,
-                                             @PathVariable int pageNumber
-    ) {
-        return productService.getProducts(id, pageNumber);
+    @GetMapping("product/page/{pageNumber}")
+    public Page<ProductResponse> getProducts(@PathVariable int pageNumber) {
+        return productService.getProducts(pageNumber);
     }
 
     @PatchMapping("product/{productId}")

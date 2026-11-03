@@ -2,6 +2,7 @@ package com.elevata.marketplace.product.domain;
 
 import com.elevata.marketplace.product.ProductResponse;
 import com.elevata.marketplace.product.ProductService;
+import com.elevata.marketplace.security.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,15 +14,18 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
     private static final int PRODUCT_PAGE_SIZE = 30;
     private final ProductRepository productRepository;
+    private final CurrentUser currentUser;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository) {
+    public ProductServiceImpl(ProductRepository productRepository, CurrentUser currentUser) {
         this.productRepository = productRepository;
+        this.currentUser = currentUser;
     }
 
     @Override
     public ProductResponse save(AddProduct product) {
-        Product p = ProductMapper.toEntity(product);
+        Long sellerId = currentUser.id();
+        Product p = ProductMapper.toEntity(product, sellerId);
 //        Why product status as null?
         p = productRepository.save(p);
 
@@ -29,8 +33,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<ProductResponse> getProducts(Long id, int pageNumber) {
-        return productRepository.getProducts(id, PageRequest.of(pageNumber,
+    public Page<ProductResponse> getProducts(int pageNumber) {
+        Long sellerId = currentUser.id();
+        return productRepository.getProducts(sellerId, PageRequest.of(pageNumber,
                 PRODUCT_PAGE_SIZE));
     }
 
@@ -56,8 +61,7 @@ public class ProductServiceImpl implements ProductService {
                                                       int pageNumber,
                                                       int catalogPageSize
     ) {
-        return productRepository
-                .findAllProductsByIdUsingIn(availableProductIds,
+        return productRepository.findAllProductsByIdUsingIn(availableProductIds,
                         PageRequest.of(pageNumber, catalogPageSize));
     }
 }
