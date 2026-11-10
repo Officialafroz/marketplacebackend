@@ -49,15 +49,7 @@ public class CatalogServiceImpl implements CatalogService {
             String productName = (product != null) ? product.productName() : "Unknown product";
             String category = (product != null) ? product.category() : "Unknown category";
 
-            return new CatalogResponse(stockResponse.productId(),
-                                stockResponse.stockId(),
-                                productName,
-                                category,
-                                stockResponse.units(),
-                                stockResponse.price(),
-                                stockResponse.stockStatus(),
-                                stockResponse.manufacturingDate(),
-                                stockResponse.expiryDate());
+            return CatalogMapper.toDto(productName, category, stockResponse);
         });
     }
 }
