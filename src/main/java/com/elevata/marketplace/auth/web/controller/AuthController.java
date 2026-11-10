@@ -4,13 +4,11 @@ import com.elevata.marketplace.auth.AuthService;
 import com.elevata.marketplace.auth.domain.OtpEmailRequest;
 import com.elevata.marketplace.auth.domain.OtpRequest;
 import com.elevata.marketplace.user.AddAppUser;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("auth")
@@ -38,5 +36,10 @@ public class AuthController {
     public String verify(HttpServletResponse response,
                          @Valid @RequestBody OtpRequest otpRequest) {
         return authService.verify(response, otpRequest);
+    }
+
+    @PostMapping("refresh")
+    public String refresh(HttpServletRequest request, HttpServletResponse response) {
+        return authService.refresh(request, response);
     }
 }

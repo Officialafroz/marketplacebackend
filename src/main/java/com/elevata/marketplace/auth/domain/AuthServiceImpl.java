@@ -5,6 +5,7 @@ import com.elevata.marketplace.security.JwtProvider;
 import com.elevata.marketplace.user.AddAppUser;
 import com.elevata.marketplace.user.AppUserDto;
 import com.elevata.marketplace.user.AppUserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +80,18 @@ public class AuthServiceImpl implements AuthService {
         handleToken(response, appUserDto.appUserId(), appUserDto.role().name());
 
         return "User authorized.";
+    }
+
+    @Override
+    public String refresh(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = cookieService.extractRefreshTokenFromCookie(request);
+        RefreshToken tokenEntity = refreshTokenService.validateRefreshToken(refreshToken);
+        AppUserDto appUserDto = appUserService.findById(tokenEntity.getAppUserId());
+        refreshTokenService.deleteByToken(refreshToken);
+
+        handleToken(response, appUserDto.appUserId(), appUserDto.role().name());
+
+        return "Access token created.";
     }
 
     private void handleToken(HttpServletResponse response, Long appUserId, String role) {

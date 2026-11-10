@@ -3,6 +3,7 @@ package com.elevata.marketplace.auth;
 import com.elevata.marketplace.auth.domain.OtpEmailRequest;
 import com.elevata.marketplace.auth.domain.OtpRequest;
 import com.elevata.marketplace.user.AddAppUser;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 
@@ -14,4 +15,6 @@ public interface AuthService {
     String login(OtpEmailRequest otpEmailRequest);
 
     String verify(HttpServletResponse response, OtpRequest otpRequest);
+
+    String refresh(HttpServletRequest request, HttpServletResponse response);
 }
