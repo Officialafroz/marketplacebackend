@@ -64,4 +64,11 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAllProductsByIdUsingIn(availableProductIds,
                         PageRequest.of(pageNumber, catalogPageSize));
     }
+
+    @Override
+    public ProductResponse findById(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found for id " + productId));
+        return ProductMapper.toDto(product);
+    }
 }

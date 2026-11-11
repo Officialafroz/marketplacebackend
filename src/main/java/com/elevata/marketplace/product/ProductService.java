@@ -18,4 +18,6 @@ public interface ProductService {
     Page<ProductResponse> getAvailableProducts(List<Long> availableProductIds,
                                                int pageNumber,
                                                int catalogPageSize);
+
+    ProductResponse findById(Long productId);
 }
