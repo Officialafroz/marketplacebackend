@@ -29,11 +29,11 @@ public class StockController {
     }
 
     @PatchMapping("{stockId}")
-    public StockResponse updatePriceOrStatus(
+    public StockResponse updateUnitsOrStatus(
             @PathVariable Long stockId,
             @RequestParam(required = false) Integer units,
             @RequestParam(required = false) String status
     ) {
-        return stockService.updatePriceOrStatus(stockId, units, status);
+        return stockService.updateUnitsOrStatus(stockId, units, status);
     }
 }

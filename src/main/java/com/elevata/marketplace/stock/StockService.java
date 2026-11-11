@@ -10,7 +10,7 @@ public interface StockService {
 
     Page<StockResponse> getProductStock(int pageNumber);
 
-    StockResponse updatePriceOrStatus(Long stockId, Integer units, String status);
+    StockResponse updateUnitsOrStatus(Long stockId, Integer units, String status);
 
     Page<StockResponse> getAvailableStock(int pageNumber, int catalogPageSize);
 }
