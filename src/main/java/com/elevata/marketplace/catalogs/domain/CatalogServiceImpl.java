@@ -12,12 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 class CatalogServiceImpl implements CatalogService {
@@ -36,27 +32,7 @@ class CatalogServiceImpl implements CatalogService {
 
     @Override
     public Page<CatalogResponse> getCatalogs(int pageNumber) {
-        Page<StockResponse> availableStock = stockService
-                .getAvailableStock(pageNumber, CATALOG_PAGE_SIZE);
-        List<Long> availableProductIds = availableStock.stream()
-                .filter(stockResponse -> stockResponse.stockStatus().name()
-                        .equals("AVAILABLE"))
-                .map(StockResponse::productId)
-                .toList();
-        Page<ProductResponse> availableProducts = productService
-                .getAvailableProducts(availableProductIds, pageNumber, CATALOG_PAGE_SIZE);
-
-//      Convert the products into a Map for instant O(1) lookups instead of nested loops
-        Map<Long, ProductResponse> productMap = availableProducts.stream()
-                .collect(Collectors.toMap(ProductResponse::productId, Function.identity()));
-
-        return availableStock.map(stockResponse -> {
-            ProductResponse product = productMap.get(stockResponse.productId());
-            String productName = (product != null) ? product.productName() : "Unknown product";
-            String category = (product != null) ? product.category() : "Unknown category";
-
-            return CatalogMapper.toDto(productName, category, stockResponse);
-        });
+        return catalogRepository.findAllResponses(PageRequest.of(pageNumber, CATALOG_PAGE_SIZE));
     }
 
     @Override
@@ -83,7 +59,6 @@ class CatalogServiceImpl implements CatalogService {
             count++;
         }
 
-        //Analyze
         if (stockStatus != null && (StockStatus.OUT_OF_STOCK.equals(stockUpdate.stockStatus())
                 || StockStatus.AVAILABLE.equals(stockUpdate.stockStatus())
                 || StockStatus.EXPIRED.equals(stockUpdate.stockStatus()))

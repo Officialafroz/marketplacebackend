@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record CatalogResponse(
+        Long catalogId,
         Long productId,
         Long stockId,
         String productName,
@@ -14,6 +15,7 @@ public record CatalogResponse(
         BigDecimal price,
         StockStatus stockStatus,
         LocalDate manufacturingDate,
-        LocalDate expiryDate
+        LocalDate expiryDate,
+        Long sellerId
 ) {
 }
