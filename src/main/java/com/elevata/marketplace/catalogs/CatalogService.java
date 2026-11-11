@@ -1,9 +1,15 @@
 package com.elevata.marketplace.catalogs;
 
+import com.elevata.marketplace.stock.StockResponse;
+import com.elevata.marketplace.stock.StockUpdate;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 @Service
 public interface CatalogService {
     Page<CatalogResponse> getCatalogs(int pageNumber);
+
+    void create(StockResponse stockResponse);
+
+    void updateUnitsOrStatus(StockUpdate stockUpdate);
 }
