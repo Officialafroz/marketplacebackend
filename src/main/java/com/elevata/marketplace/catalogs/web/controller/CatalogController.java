@@ -4,10 +4,7 @@ import com.elevata.marketplace.catalogs.CatalogResponse;
 import com.elevata.marketplace.catalogs.CatalogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/customer/catalogs")
@@ -23,5 +20,11 @@ class CatalogController {
     @GetMapping("page/{pageNumber}")
     Page<CatalogResponse> getCatalogs(@PathVariable int pageNumber) {
         return catalogService.getCatalogs(pageNumber);
+    }
+
+    @GetMapping("search/product-name/page/{pageNumber}")
+    Page<CatalogResponse> search(@RequestParam String productName,
+                                            @PathVariable int pageNumber) {
+        return catalogService.search(productName, pageNumber);
     }
 }

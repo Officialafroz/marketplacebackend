@@ -12,4 +12,6 @@ public interface CatalogService {
     void create(StockResponse stockResponse);
 
     void updateUnitsOrStatus(StockUpdate stockUpdate);
+
+    Page<CatalogResponse> search(String productName, int pageNumber);
 }

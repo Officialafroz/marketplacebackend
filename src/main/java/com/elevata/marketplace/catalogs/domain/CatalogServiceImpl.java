@@ -73,4 +73,10 @@ class CatalogServiceImpl implements CatalogService {
 
         log.info("Catalog stock status: {}", stockUpdate.stockStatus());
     }
+
+    @Override
+    public Page<CatalogResponse> search(String productName, int pageNumber) {
+        return catalogRepository.search(productName,
+                PageRequest.of(pageNumber, CATALOG_PAGE_SIZE));
+    }
 }
