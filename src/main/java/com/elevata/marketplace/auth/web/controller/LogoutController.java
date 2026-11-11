@@ -21,8 +21,8 @@ public class LogoutController {
     }
 
     // Why passing the id?
-    @GetMapping("logout/{id}")
-    public String logout(HttpServletRequest request, HttpServletResponse response, @PathVariable Long id) {
-        return logoutService.logout(request, response, id);
+    @GetMapping("logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        return logoutService.logout(request, response);
     }
 }
