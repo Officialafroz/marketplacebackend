@@ -1,5 +1,7 @@
 package com.elevata.marketplace.address.domain;
 
+import com.elevata.marketplace.address.AddressResponse;
+
 class AddressMapper {
 
     static AddressResponse toDto(Address entity) {

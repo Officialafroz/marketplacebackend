@@ -1,5 +1,6 @@
 package com.elevata.marketplace.address.domain;
 
+import com.elevata.marketplace.address.AddressResponse;
 import com.elevata.marketplace.security.CurrentUser;
 import com.elevata.marketplace.address.AddressService;
 import org.slf4j.Logger;
@@ -78,6 +79,14 @@ class AddressServiceImpl implements AddressService {
         }
 
         address = addressRepository.save(address);
+        return AddressMapper.toDto(address);
+    }
+
+    @Override
+    public AddressResponse findById(Long addressId) {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new AddressNotFoundException("Invalid addressId " + addressId));
+
         return AddressMapper.toDto(address);
     }
 

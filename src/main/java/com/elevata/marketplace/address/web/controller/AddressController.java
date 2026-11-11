@@ -1,8 +1,8 @@
 package com.elevata.marketplace.address.web.controller;
 
+import com.elevata.marketplace.address.AddressResponse;
 import com.elevata.marketplace.address.AddressService;
 import com.elevata.marketplace.address.domain.AddressRequest;
-import com.elevata.marketplace.address.domain.AddressResponse;
 import com.elevata.marketplace.validations.ValidZipcode;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

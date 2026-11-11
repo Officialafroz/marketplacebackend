@@ -1,4 +1,4 @@
-package com.elevata.marketplace.address.domain;
+package com.elevata.marketplace.address;
 
 public record AddressResponse(
         Long addressId,
