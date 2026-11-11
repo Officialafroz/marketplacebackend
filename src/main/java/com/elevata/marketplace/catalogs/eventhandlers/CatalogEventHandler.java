@@ -10,7 +10,7 @@ import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CatalogEventHandler {
+class CatalogEventHandler {
 
     private static final Logger log = LoggerFactory.getLogger(CatalogEventHandler.class);
     private final CatalogService catalogService;

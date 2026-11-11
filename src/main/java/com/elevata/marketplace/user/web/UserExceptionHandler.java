@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
-public class UserExceptionHandler {
+class UserExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ErrorResponse handleUserNotFoundError(UserNotFoundException e) {
+    ErrorResponse handleUserNotFoundError(UserNotFoundException e) {
         return new ErrorResponse(e.getMessage(), LocalDateTime.now());
     }
 }

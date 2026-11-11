@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @DynamicInsert
-public class Otp {
+class Otp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

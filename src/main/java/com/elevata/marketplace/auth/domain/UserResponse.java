@@ -4,7 +4,7 @@ import com.elevata.marketplace.user.AppUserRole;
 
 import java.time.LocalDateTime;
 
-public record UserResponse(
+record UserResponse(
         String fullName,
         String email,
         String phoneNumber,

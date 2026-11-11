@@ -9,15 +9,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
-public class ProductExceptionHandler {
+class ProductExceptionHandler {
 
     @ExceptionHandler(ProductNotFoundException.class)
-    public ErrorResponse handleProductNotFoundError(ProductNotFoundException e) {
+    ErrorResponse handleProductNotFoundError(ProductNotFoundException e) {
         return new ErrorResponse(e.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler(InvalidProductStatusException.class)
-    public ErrorResponse handleProductNotFoundError(InvalidProductStatusException e) {
+    ErrorResponse handleProductNotFoundError(InvalidProductStatusException e) {
         return new ErrorResponse(e.getMessage(), LocalDateTime.now());
     }
 }

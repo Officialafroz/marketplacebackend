@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ProductServiceImpl implements ProductService {
+class ProductServiceImpl implements ProductService {
     private static final int PRODUCT_PAGE_SIZE = 30;
     private final ProductRepository productRepository;
     private final CurrentUser currentUser;

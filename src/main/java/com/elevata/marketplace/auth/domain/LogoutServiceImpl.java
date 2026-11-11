@@ -11,7 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LogoutServiceImpl implements LogoutService {
+class LogoutServiceImpl implements LogoutService {
 
     private static final Logger log = LoggerFactory.getLogger(LogoutServiceImpl.class);
     private final AppUserService appUserService;

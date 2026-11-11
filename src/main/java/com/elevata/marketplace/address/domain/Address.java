@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @DynamicInsert
-public class Address {
+class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long addressId;

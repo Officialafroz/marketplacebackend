@@ -5,9 +5,6 @@ import java.security.SecureRandom;
 final class OtpGenerator {
     private static final SecureRandom RANDOM = new SecureRandom();
 
-    public OtpGenerator() {
-    }
-
     public static String generateNumericOtp(int length) {
         if (length < 4 || length > 10) {
             throw new IllegalArgumentException("OTP Length must be between 4 and 10");

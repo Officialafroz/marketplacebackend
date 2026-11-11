@@ -12,34 +12,34 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("auth")
-public class AuthController {
+class AuthController {
 
     private final AuthService authService;
 
     @Autowired
-    public AuthController(AuthService authService) {
+    AuthController(AuthService authService) {
         this.authService = authService;
     }
 
     @PostMapping("register")
-    public String register(HttpServletResponse response,
+    String register(HttpServletResponse response,
                                    @Valid @RequestBody AddAppUser appUser) {
         return authService.register(response, appUser);
     }
 
     @PostMapping("login")
-    public String login(@Valid @RequestBody OtpEmailRequest otpEmailRequest) {
+    String login(@Valid @RequestBody OtpEmailRequest otpEmailRequest) {
         return authService.login(otpEmailRequest);
     }
 
     @PostMapping("verify/otp")
-    public String verify(HttpServletResponse response,
+    String verify(HttpServletResponse response,
                          @Valid @RequestBody OtpRequest otpRequest) {
         return authService.verify(response, otpRequest);
     }
 
     @PostMapping("refresh")
-    public String refresh(HttpServletRequest request, HttpServletResponse response) {
+    String refresh(HttpServletRequest request, HttpServletResponse response) {
         return authService.refresh(request, response);
     }
 }

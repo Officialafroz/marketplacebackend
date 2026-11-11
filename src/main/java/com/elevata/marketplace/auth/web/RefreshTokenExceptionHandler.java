@@ -9,15 +9,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
-public class RefreshTokenExceptionHandler {
+class RefreshTokenExceptionHandler {
 
     @ExceptionHandler(RefreshTokenNotFoundException.class)
-    public ErrorResponse handleRefreshTokenNotFoundError(RefreshTokenNotFoundException e) {
+    ErrorResponse handleRefreshTokenNotFoundError(RefreshTokenNotFoundException e) {
         return new ErrorResponse(e.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler(RefreshTokenExpiredException.class)
-    public ErrorResponse handleRefreshTokenExpiredError(RefreshTokenExpiredException e) {
+    ErrorResponse handleRefreshTokenExpiredError(RefreshTokenExpiredException e) {
         return new ErrorResponse(e.getMessage(), LocalDateTime.now());
     }
 }

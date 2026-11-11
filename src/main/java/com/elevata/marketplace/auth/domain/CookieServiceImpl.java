@@ -10,7 +10,7 @@ import java.time.Duration;
 import java.util.Arrays;
 
 @Service
-public class CookieServiceImpl implements CookieService {
+class CookieServiceImpl implements CookieService {
 
     private final Duration accessTokenTtl;
     private final Duration refreshTokenExpiration;

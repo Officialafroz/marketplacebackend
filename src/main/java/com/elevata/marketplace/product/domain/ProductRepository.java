@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
+interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("""
         SELECT new com.elevata.marketplace.product.ProductResponse(

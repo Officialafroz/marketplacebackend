@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @DynamicInsert
-public class AppUser {
+class AppUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

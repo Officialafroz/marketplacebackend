@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @DynamicInsert
-public class Stock {
+class Stock {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long stockId;

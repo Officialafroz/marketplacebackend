@@ -1,6 +1,6 @@
 package com.elevata.marketplace.auth.domain;
 
-public enum AppUserStatus {
+enum AppUserStatus {
     ACTIVE,
     INACTIVE
 }

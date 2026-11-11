@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @DynamicInsert
-public class RefreshToken {
+class RefreshToken {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long refreshTokenId;

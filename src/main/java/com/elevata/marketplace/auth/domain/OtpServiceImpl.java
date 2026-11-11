@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
-public class OtpServiceImpl implements OtpService {
+class OtpServiceImpl implements OtpService {
     private static final Logger log = LoggerFactory.getLogger(OtpServiceImpl.class);
     private final AppUserService appUserService;
     private final OtpRepository otpRepository;

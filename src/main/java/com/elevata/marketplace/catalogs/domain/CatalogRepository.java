@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface CatalogRepository extends JpaRepository<Catalog, Long> {
+interface CatalogRepository extends JpaRepository<Catalog, Long> {
     Optional<Catalog> findByStockId(Long stockId);
 }

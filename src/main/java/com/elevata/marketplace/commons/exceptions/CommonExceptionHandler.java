@@ -10,20 +10,20 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
-public class CommonExceptionHandler {
+class CommonExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ErrorResponse handlerDataIntegrityViolationError(DataIntegrityViolationException e) {
+    ErrorResponse handleDataIntegrityViolationError(DataIntegrityViolationException e) {
         return new ErrorResponse(e.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorResponse handleMethodArgumentNotValidError(MethodArgumentNotValidException e) {
+    ErrorResponse handleMethodArgumentNotValidError(MethodArgumentNotValidException e) {
         return new ErrorResponse(e.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler(InvalidDataAccessResourceUsageException.class)
-    public ErrorResponse handleInvalidDataAccessResourceUsageExceptionError(InvalidDataAccessResourceUsageException e) {
+    ErrorResponse handleInvalidDataAccessResourceUsageExceptionError(InvalidDataAccessResourceUsageException e) {
         return new ErrorResponse(e.getMessage(), LocalDateTime.now());
     }
 }

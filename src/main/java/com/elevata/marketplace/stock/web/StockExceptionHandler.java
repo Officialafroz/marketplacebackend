@@ -9,15 +9,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
-public class StockExceptionHandler {
+class StockExceptionHandler {
 
     @ExceptionHandler(StockNotFoundException.class)
-    public ErrorResponse handleStockNotFoundError(StockNotFoundException e) {
+    ErrorResponse handleStockNotFoundError(StockNotFoundException e) {
         return new ErrorResponse(e.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler(InvalidStockStatusException.class)
-    public ErrorResponse handleInvalidStockError(InvalidStockStatusException e) {
+    ErrorResponse handleInvalidStockError(InvalidStockStatusException e) {
         return new ErrorResponse(e.getMessage(), LocalDateTime.now());
     }
 }

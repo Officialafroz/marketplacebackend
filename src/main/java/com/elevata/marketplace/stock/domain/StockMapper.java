@@ -3,10 +3,9 @@ package com.elevata.marketplace.stock.domain;
 import com.elevata.marketplace.stock.StockResponse;
 import com.elevata.marketplace.stock.StockStatus;
 
-public final class StockMapper {
-    public StockMapper() {}
+final class StockMapper {
 
-    public static StockResponse convertToDto(Stock s) {
+    static StockResponse convertToDto(Stock s) {
         return new StockResponse(s.getStockId(),
                 s.getProductId(),
                 s.getUnits(),
@@ -18,7 +17,7 @@ public final class StockMapper {
                 s.getUpdatedAt());
     }
 
-    public static Stock toEntity(AddStockForProduct stock) {
+    static Stock toEntity(AddStockForProduct stock) {
         return new Stock(stock.units(),
                 stock.price(),
                 stock.manufacturingDate(),

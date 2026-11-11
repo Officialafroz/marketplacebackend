@@ -10,29 +10,29 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/seller")
-public class ProductController {
+class ProductController {
 
     private final ProductService productService;
 
     @Autowired
-    public ProductController(ProductService productService) {
+    ProductController(ProductService productService) {
         this.productService = productService;
     }
 
     @PostMapping("product")
-    public ProductResponse save(@Valid @RequestBody AddProduct product) {
+    ProductResponse save(@Valid @RequestBody AddProduct product) {
         return productService.save(product);
     }
 
     //id is for seller and won't work now
     @GetMapping("product/page/{pageNumber}")
-    public Page<ProductResponse> getProducts(@PathVariable int pageNumber) {
+    Page<ProductResponse> getProducts(@PathVariable int pageNumber) {
         return productService.getProducts(pageNumber);
     }
 
     @PatchMapping("product/{productId}")
-    public ProductResponse updateStatus(@PathVariable Long productId,
-                                        @RequestParam String status
+    ProductResponse updateStatus(@PathVariable Long productId,
+                                 @RequestParam String status
     ) {
         return productService.updateStatus(productId,   status);
     }

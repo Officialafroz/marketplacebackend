@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class StockServiceImpl implements StockService {
+class StockServiceImpl implements StockService {
     private static final Logger log = LoggerFactory.getLogger(StockServiceImpl.class);
     private static final int PRODUCT_PAGE_SIZE = 30;
     private final StockRepository stockRepository;

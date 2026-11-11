@@ -20,7 +20,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-public class CatalogServiceImpl implements CatalogService {
+class CatalogServiceImpl implements CatalogService {
     private static final int CATALOG_PAGE_SIZE = 50;
     private static final Logger log = LoggerFactory.getLogger(CatalogServiceImpl.class);
     private final StockService stockService;

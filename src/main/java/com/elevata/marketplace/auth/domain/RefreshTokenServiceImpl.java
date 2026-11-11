@@ -11,7 +11,7 @@ import java.time.Instant;
 import java.util.Base64;
 
 @Service
-public class RefreshTokenServiceImpl implements RefreshTokenService {
+class RefreshTokenServiceImpl implements RefreshTokenService {
     private final Duration refreshTokenExpiration;
     private final RefreshTokenRepository refreshTokenRepository;
 

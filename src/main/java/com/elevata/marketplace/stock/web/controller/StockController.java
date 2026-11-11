@@ -10,26 +10,26 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/seller/stock")
-public class StockController {
+class StockController {
     private final StockService stockService;
 
     @Autowired
-    public StockController(StockService stockService) {
+    StockController(StockService stockService) {
         this.stockService = stockService;
     }
 
     @PostMapping
-    public StockResponse add(@RequestBody @Valid AddStockForProduct stock) {
+    StockResponse add(@RequestBody @Valid AddStockForProduct stock) {
         return stockService.add(stock);
     }
 
     @GetMapping("page/{pageNumber}")
-    public Page<StockResponse> getProductStock(@PathVariable int pageNumber) {
+    Page<StockResponse> getProductStock(@PathVariable int pageNumber) {
         return stockService.getProductStock(pageNumber);
     }
 
     @PatchMapping("{stockId}")
-    public StockResponse updateUnitsOrStatus(
+    StockResponse updateUnitsOrStatus(
             @PathVariable Long stockId,
             @RequestParam(required = false) Integer units,
             @RequestParam(required = false) String status

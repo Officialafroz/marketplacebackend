@@ -8,7 +8,7 @@ import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserEventHandler {
+class UserEventHandler {
     private static final Logger log = LoggerFactory.getLogger(UserEventHandler.class);
     private final AppUserService appUserService;
 

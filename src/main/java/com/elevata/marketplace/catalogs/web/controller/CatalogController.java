@@ -11,17 +11,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("api/customer/catalogs")
-public class CatalogController {
+class CatalogController {
 
     private final CatalogService catalogService;
 
     @Autowired
-    public CatalogController(CatalogService catalogService) {
+    CatalogController(CatalogService catalogService) {
         this.catalogService = catalogService;
     }
 
     @GetMapping("page/{pageNumber}")
-    public Page<CatalogResponse> getCatalogs(@PathVariable int pageNumber) {
+    Page<CatalogResponse> getCatalogs(@PathVariable int pageNumber) {
         return catalogService.getCatalogs(pageNumber);
     }
 }

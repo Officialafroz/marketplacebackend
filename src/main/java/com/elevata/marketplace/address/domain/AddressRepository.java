@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface AddressRepository extends JpaRepository<Address, Long> {
+interface AddressRepository extends JpaRepository<Address, Long> {
     @Query("SELECT COUNT(*) FROM Address a WHERE a.appUserId = :appUserId")
     int countByAppUserId(@Param("appUserId") Long appUserId);
 

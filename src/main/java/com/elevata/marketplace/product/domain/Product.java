@@ -7,12 +7,11 @@ import java.time.LocalDateTime;
 
 @Entity
 @DynamicInsert
-public class Product {
+class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
-
     private String productName;
     private String category;
 
@@ -69,9 +68,5 @@ public class Product {
 
     public Long getSellerId() {
         return sellerId;
-    }
-
-    public void setSellerId(Long sellerId) {
-        this.sellerId = sellerId;
     }
 }

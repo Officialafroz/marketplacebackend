@@ -5,7 +5,8 @@ import com.elevata.marketplace.product.ProductResponse;
 import com.elevata.marketplace.stock.StockResponse;
 
 class CatalogMapper {
-    public static CatalogResponse toDto(String productName,
+    
+    static CatalogResponse toDto(String productName,
                                         String category,
                                         StockResponse stockResponse
     ) {
@@ -20,7 +21,7 @@ class CatalogMapper {
                 stockResponse.expiryDate());
     }
 
-    public static Catalog toEntity(ProductResponse productResponse, StockResponse stockResponse) {
+    static Catalog toEntity(ProductResponse productResponse, StockResponse stockResponse) {
         return new Catalog(productResponse.productId(),
                 productResponse.productName(),
                 productResponse.category(),

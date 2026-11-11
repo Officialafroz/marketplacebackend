@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface OtpRepository extends JpaRepository<Otp, Long> {
+interface OtpRepository extends JpaRepository<Otp, Long> {
     Otp findByAppUserId(Long appUserId);
 
     @Query("SELECT o FROM Otp o ORDER BY o.createdAt DESC LIMIT 1")

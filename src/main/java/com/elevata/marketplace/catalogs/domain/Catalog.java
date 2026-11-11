@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @DynamicInsert
-public class Catalog {
+class Catalog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

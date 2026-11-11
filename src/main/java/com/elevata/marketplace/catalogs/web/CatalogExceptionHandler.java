@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
-public class CatalogExceptionHandler {
+class CatalogExceptionHandler {
 
     @ExceptionHandler(CatalogNotFoundException.class)
-    public ErrorResponse handleCatalogNotFoundError(CatalogNotFoundException e) {
+    ErrorResponse handleCatalogNotFoundError(CatalogNotFoundException e) {
         return new ErrorResponse(e.getMessage(), LocalDateTime.now());
     }
 }

@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("api")
-public class LogoutController {
+class LogoutController {
 
     private final LogoutService logoutService;
 
     @Autowired
-    public LogoutController(LogoutService logoutService) {
+    LogoutController(LogoutService logoutService) {
         this.logoutService = logoutService;
     }
 
     // Why passing the id?
     @GetMapping("logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
+    String logout(HttpServletRequest request, HttpServletResponse response) {
         return logoutService.logout(request, response);
     }
 }

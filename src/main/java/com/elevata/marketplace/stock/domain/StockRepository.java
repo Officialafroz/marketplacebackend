@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface StockRepository extends JpaRepository<Stock, Long> {
+interface StockRepository extends JpaRepository<Stock, Long> {
     @Query("""
         SELECT new com.elevata.marketplace.stock.StockResponse(
             s.stockId, s.productId, s.units, s.price, s.manufacturingDate,

@@ -10,22 +10,22 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/customer/address")
-public class AddressController {
+class AddressController {
 
     private final AddressService addressService;
 
     @Autowired
-    public AddressController(AddressService addressService) {
+    AddressController(AddressService addressService) {
         this.addressService = addressService;
     }
 
     @PostMapping
-    public AddressResponse save(@Valid @RequestBody AddressRequest addressRequest) {
+    AddressResponse save(@Valid @RequestBody AddressRequest addressRequest) {
         return addressService.save(addressRequest);
     }
 
     @PatchMapping("{addressId}")
-    public AddressResponse update(@PathVariable Long addressId,
+    AddressResponse update(@PathVariable Long addressId,
                                   @RequestParam(required = false) String street,
                                   @RequestParam(required = false) String society,
                                   @RequestParam(required = false) String townVillageCity,
