@@ -79,4 +79,12 @@ class CatalogServiceImpl implements CatalogService {
         return catalogRepository.search(productName,
                 PageRequest.of(pageNumber, CATALOG_PAGE_SIZE));
     }
+
+    @Override
+    public CatalogResponse findById(Long catalogId) {
+        Catalog catalog = catalogRepository.findById(catalogId)
+                .orElseThrow(() -> new CatalogNotFoundException("Invalid catalog id."));
+
+        return CatalogMapper.toDto(catalog);
+    }
 }

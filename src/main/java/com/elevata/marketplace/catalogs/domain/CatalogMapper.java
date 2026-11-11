@@ -18,4 +18,18 @@ class CatalogMapper {
                 stockResponse.expiryDate(),
                 productResponse.sellerId());
     }
+
+    static CatalogResponse toDto(Catalog catalog) {
+        return new CatalogResponse(catalog.getCatalogId(),
+                catalog.getProductId(),
+                catalog.getStockId(),
+                catalog.getProductName(),
+                catalog.getCategory(),
+                catalog.getUnits(),
+                catalog.getPrice(),
+                catalog.getStockStatus(),
+                catalog.getManufacturingDate(),
+                catalog.getExpiryDate(),
+                catalog.getSellerId());
+    }
 }

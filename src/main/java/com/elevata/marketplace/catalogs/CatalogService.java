@@ -14,4 +14,6 @@ public interface CatalogService {
     void updateUnitsOrStatus(StockUpdate stockUpdate);
 
     Page<CatalogResponse> search(String productName, int pageNumber);
+
+    CatalogResponse findById(Long catalogId);
 }
