@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public ProductResponse save(AddProduct product) {
         Long sellerId = currentUser.id();
         Product p = ProductMapper.toEntity(product, sellerId);
@@ -40,6 +42,7 @@ class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public ProductResponse updateStatus(Long productId, String status) {
         Product p = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException("Product for id-" + productId + " not found."));

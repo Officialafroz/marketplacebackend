@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 class AddressServiceImpl implements AddressService {
@@ -21,6 +22,7 @@ class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    @Transactional
     public AddressResponse save(AddressRequest addressRequest) {
         Long appUserId = currentUser.id();
 
@@ -39,6 +41,7 @@ class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    @Transactional
     public AddressResponse update(Long addressId, String street, String society, String townVillageCity, String zipcode) {
         Address address = addressRepository.findByAddressIdAndAppUserId(addressId, currentUser.id())
                 .orElseThrow(() -> new AddressNotFoundException("Invalid addressId " + addressId));
