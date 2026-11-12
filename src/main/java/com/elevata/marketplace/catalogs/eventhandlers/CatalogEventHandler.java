@@ -3,6 +3,7 @@ package com.elevata.marketplace.catalogs.eventhandlers;
 import com.elevata.marketplace.catalogs.CatalogService;
 import com.elevata.marketplace.stock.StockResponse;
 import com.elevata.marketplace.stock.StockStatus;
+import com.elevata.marketplace.stock.StockUnitsUpdate;
 import com.elevata.marketplace.stock.StockUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,5 +30,10 @@ class CatalogEventHandler {
     void handle(StockUpdate stockUpdate) {
         log.info("[From the catalog event handler] update event called");
         catalogService.updateUnitsOrStatus(stockUpdate);
+    }
+
+    @ApplicationModuleListener
+    void handle(StockUnitsUpdate stock) {
+        catalogService.updateUnits(stock.stockId(), stock.units());
     }
 }

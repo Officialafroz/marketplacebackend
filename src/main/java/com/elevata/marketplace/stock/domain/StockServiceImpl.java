@@ -47,9 +47,7 @@ class StockServiceImpl implements StockService {
     @Override
     @Transactional
     public StockResponse updateUnitsOrStatus(Long stockId, Integer units, String status) {
-        Stock s = stockRepository.findById(stockId)
-                .orElseThrow(() -> new StockNotFoundException(
-                        "Stock not found for id " + stockId));
+        Stock s = fetchStock(stockId);
         byte count = 0;
         StockStatus stockStatus = null;
 
@@ -81,7 +79,32 @@ class StockServiceImpl implements StockService {
     }
 
     @Override
+    @Transactional
+    public void updateUnits(Long stockId, Integer units) {
+        Stock s = fetchStock(stockId);
+        boolean isUpdated = false;
+
+        if (units != null && units > 0) {
+            s.setUnits(units);
+            isUpdated = true;
+        }
+
+        if (!isUpdated) {
+            throw new RuntimeException("At least 1 field is required");
+        }
+
+        log.info("Stock units updated: {}", units);
+        stockRepository.save(s);
+    }
+
+    @Override
     public Page<StockResponse> getAvailableStock(int pageNumber, int catalogPageSize) {
         return stockRepository.getAvailableStock(PageRequest.of(pageNumber, catalogPageSize));
+    }
+
+    private Stock fetchStock(Long stockId) {
+        return stockRepository.findById(stockId)
+                .orElseThrow(() -> new StockNotFoundException(
+                        "Stock not found for id " + stockId));
     }
 }

@@ -1,5 +1,7 @@
 package com.elevata.marketplace.catalogs.domain;
 
+import com.elevata.marketplace.catalogs.CatalogOrderInfo;
+import com.elevata.marketplace.catalogs.CatalogOrderResponse;
 import com.elevata.marketplace.catalogs.CatalogResponse;
 import com.elevata.marketplace.catalogs.CatalogService;
 import com.elevata.marketplace.product.ProductResponse;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 class CatalogServiceImpl implements CatalogService {
@@ -36,16 +39,17 @@ class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    @Transactional
     public void create(StockResponse stockResponse) {
         ProductResponse productResponse = productService.findById(stockResponse.productId());
 
         Catalog catalog = CatalogMapper.toEntity(productResponse, stockResponse);
         catalogRepository.save(catalog);
-
         log.info("[Catalog has been saved]: Catalog created");
     }
 
     @Override
+    @Transactional
     public void updateUnitsOrStatus(StockUpdate stockUpdate) {
         Catalog catalog = catalogRepository.findByStockId(stockUpdate.stockId())
                 .orElseThrow(() -> new CatalogNotFoundException("Catalog not found for stock id " 
@@ -71,6 +75,7 @@ class CatalogServiceImpl implements CatalogService {
             throw new RuntimeException("At least 1 field is required");
         }
 
+        catalogRepository.save(catalog);
         log.info("Catalog stock status: {}", stockUpdate.stockStatus());
     }
 
@@ -82,9 +87,48 @@ class CatalogServiceImpl implements CatalogService {
 
     @Override
     public CatalogResponse findById(Long catalogId) {
-        Catalog catalog = catalogRepository.findById(catalogId)
-                .orElseThrow(() -> new CatalogNotFoundException("Invalid catalog id."));
+        Catalog catalog = fetchCatalog(catalogId);
 
         return CatalogMapper.toDto(catalog);
+    }
+
+    @Override
+    public CatalogOrderInfo getCatalogOrderInfo(Long catalogId) {
+        return catalogRepository.getCatalogOrderInfo(catalogId)
+                .orElseThrow(() -> new CatalogNotFoundException("Invalid catalog id."));
+    }
+
+    @Override
+    @Transactional
+    public void updateUnits(Long stockId, Integer units) {
+        Catalog catalog = catalogRepository.findByStockId(stockId)
+                .orElseThrow(() -> new CatalogNotFoundException("Catalog not found for stock id "
+                        + stockId));
+
+        boolean isUpdated = false;
+
+        if (units != null && units > 0) {
+            catalog.setUnits(units);
+            isUpdated = true;
+        }
+
+        if (!isUpdated) {
+            throw new RuntimeException("At least 1 field is required");
+        }
+
+        catalogRepository.save(catalog);
+        log.info("Catalog units updated: {}", units);
+    }
+
+    @Override
+    public CatalogOrderResponse getCatalogOrderResponse(Long catalogId) {
+        Catalog catalog = fetchCatalog(catalogId);
+
+        return CatalogMapper.toCatalogOrderDto(catalog);
+    }
+
+    private Catalog fetchCatalog(Long catalogId) {
+        return catalogRepository.findById(catalogId)
+                .orElseThrow(() -> new CatalogNotFoundException("Invalid catalog id."));
     }
 }

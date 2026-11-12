@@ -1,5 +1,6 @@
 package com.elevata.marketplace.catalogs.domain;
 
+import com.elevata.marketplace.catalogs.CatalogOrderResponse;
 import com.elevata.marketplace.catalogs.CatalogResponse;
 import com.elevata.marketplace.product.ProductResponse;
 import com.elevata.marketplace.stock.StockResponse;
@@ -28,6 +29,16 @@ class CatalogMapper {
                 catalog.getUnits(),
                 catalog.getPrice(),
                 catalog.getStockStatus(),
+                catalog.getManufacturingDate(),
+                catalog.getExpiryDate(),
+                catalog.getSellerId());
+    }
+
+    static CatalogOrderResponse toCatalogOrderDto(Catalog catalog) {
+        return new CatalogOrderResponse(catalog.getCatalogId(),
+                catalog.getProductName(),
+                catalog.getCategory(),
+                catalog.getPrice(),
                 catalog.getManufacturingDate(),
                 catalog.getExpiryDate(),
                 catalog.getSellerId());
