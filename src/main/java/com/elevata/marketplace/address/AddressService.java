@@ -12,4 +12,6 @@ public interface AddressService {
     AddressResponse update(Long addressId, AddressUpdateRequest updateRequest);
 
     AddressResponse findById(Long addressId);
+
+    Long getDefaultAddressByCustomerId(Long customerId);
 }

@@ -102,6 +102,13 @@ class AddressServiceImpl implements AddressService {
         return AddressMapper.toDto(address);
     }
 
+    @Override
+    public Long getDefaultAddressByCustomerId(Long customerId) {
+        return addressRepository.getDefaultAddressByCustomerId(customerId)
+                .map(Address::getAddressId)
+                .orElseThrow(() -> new AddressNotFoundException("Default address not found."));
+    }
+
     private void handleDefaultAddress(Long appUserId) {
         addressRepository.getDefaultAddressByCustomerId(appUserId)
                 .ifPresent(address -> {
