@@ -52,7 +52,7 @@ class LogoutServiceImpl implements LogoutService {
 
         SecurityContextHolder.clearContext();
 
-        log.info("[User has been logged out]");
+        log.info("[User has been logged out] From the Logout Service");
 
         return "User has been logged out.";
     }

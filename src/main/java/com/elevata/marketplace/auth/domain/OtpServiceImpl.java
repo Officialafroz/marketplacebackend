@@ -26,7 +26,7 @@ class OtpServiceImpl implements OtpService {
 
     @Override
     @Transactional
-    public void create(String email) {
+    public String create(String email) {
         Long appUserId = appUserService.getIdByEmail(email);
         LocalDateTime expiresAt = otpRepository
                 .findByAppUserIdOrderByCreatedAtDesc(appUserId).getExpiresAt();
@@ -40,10 +40,11 @@ class OtpServiceImpl implements OtpService {
             String text = "Your otp for login " + otpValue;
             emailService.send(email, "Login credentials", text);
             log.info("OTP generated: {}", otpValue);
-            return;
+            return "Otp generated for email " + email;
         }
 
         log.info("OTP is not expired yet.");
+        return "OTP is not expired yet.";
     }
 
     @Override

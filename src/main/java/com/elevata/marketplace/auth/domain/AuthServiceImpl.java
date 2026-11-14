@@ -61,9 +61,7 @@ class AuthServiceImpl implements AuthService {
             return "User does not exist for email " + otpEmailRequest.email();
         }
 
-        otpService.create(otpEmailRequest.email());
-
-        return "Otp generated for email " + otpEmailRequest.email();
+        return otpService.create(otpEmailRequest.email());
     }
 
     @Override
@@ -73,12 +71,14 @@ class AuthServiceImpl implements AuthService {
         }
 
         if (!otpService.verifyOtp(otpRequest)) {
+            log.info("[Invalid OTP] From the Auth Service");
             return "Invalid OTP";
         }
 
         AppUserDto appUserDto = appUserService.findByEmail(otpRequest.email());
         handleToken(response, appUserDto.appUserId(), appUserDto.role().name());
 
+        log.info("[User authorized] From the Auth Service");
         return "User authorized.";
     }
 
@@ -91,6 +91,7 @@ class AuthServiceImpl implements AuthService {
 
         handleToken(response, appUserDto.appUserId(), appUserDto.role().name());
 
+        log.info("[Access token created] From the Auth service");
         return "Access token created.";
     }
 
