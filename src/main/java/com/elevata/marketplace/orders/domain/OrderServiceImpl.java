@@ -2,16 +2,15 @@ package com.elevata.marketplace.orders.domain;
 
 import com.elevata.marketplace.address.AddressResponse;
 import com.elevata.marketplace.address.AddressService;
+import com.elevata.marketplace.carts.BulkCartOrderRequest;
 import com.elevata.marketplace.carts.CartOrderRequest;
 import com.elevata.marketplace.catalogs.CatalogOrderInfo;
 import com.elevata.marketplace.catalogs.CatalogOrderResponse;
-import com.elevata.marketplace.catalogs.CatalogResponse;
 import com.elevata.marketplace.catalogs.CatalogService;
 import com.elevata.marketplace.orders.OrderResponse;
 import com.elevata.marketplace.orders.OrderService;
 import com.elevata.marketplace.security.CurrentUser;
 import com.elevata.marketplace.stock.StockUnitsUpdate;
-import com.elevata.marketplace.stock.StockUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -19,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 class OrderServiceImpl implements OrderService {
@@ -118,6 +119,28 @@ class OrderServiceImpl implements OrderService {
                 updatedQuantity));
 
         log.info("[From the order service] cart order created info: {}", cartOrderRequest);
+    }
+
+    @Override
+    @Transactional
+    public void allCartsToOrder(BulkCartOrderRequest bulkCartOrderRequest) {
+        if (bulkCartOrderRequest.orderRequest().isEmpty()) {
+            return;
+        }
+
+        bulkCartOrderRequest.orderRequest().forEach(this::cartToOrder);
+    }
+
+    @Override
+    public List<OrderResponse> findAllActive() {
+        Long id = currentUser.id();
+        List<Order> orders = orderRepository.findAllByCustomerIdAndOrderStatus(id,
+                OrderStatus.PLACED);
+        List<OrderResponse> orderResponses = new ArrayList<>(orders.size());
+
+        orders.forEach(order -> orderResponses.add(makeDto(order)));
+
+        return orderResponses;
     }
 
     private OrderResponse makeDto(Order order) {

@@ -6,6 +6,8 @@ import com.elevata.marketplace.orders.domain.OrderRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/customer/order")
 class OrderController {
@@ -19,6 +21,11 @@ class OrderController {
     @PostMapping
     OrderResponse save(@Valid @RequestBody OrderRequest orderRequest) {
         return orderService.save(orderRequest);
+    }
+
+    @GetMapping("list/active")
+    List<OrderResponse> findAll() {
+        return orderService.findAllActive();
     }
 
     @PostMapping("cancel/{orderId}")

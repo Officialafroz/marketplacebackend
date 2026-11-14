@@ -1,5 +1,6 @@
 package com.elevata.marketplace.orders.eventhandler;
 
+import com.elevata.marketplace.carts.BulkCartOrderRequest;
 import com.elevata.marketplace.carts.CartOrderRequest;
 import com.elevata.marketplace.orders.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,5 +20,10 @@ class OrderEventHandler {
     @ApplicationModuleListener
     void handle(CartOrderRequest cartOrderRequest) {
         orderService.cartToOrder(cartOrderRequest);
+    }
+
+    @ApplicationModuleListener
+    void handle(BulkCartOrderRequest bulkCartOrderRequest) {
+        orderService.allCartsToOrder(bulkCartOrderRequest);
     }
 }

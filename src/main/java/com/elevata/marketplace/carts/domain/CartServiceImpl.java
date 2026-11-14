@@ -1,14 +1,10 @@
 package com.elevata.marketplace.carts.domain;
 
-import com.elevata.marketplace.carts.CartOrderRequest;
-import com.elevata.marketplace.carts.CartRequest;
-import com.elevata.marketplace.carts.CartResponse;
-import com.elevata.marketplace.carts.CartService;
+import com.elevata.marketplace.carts.*;
 import com.elevata.marketplace.catalogs.CatalogOrderInfo;
 import com.elevata.marketplace.catalogs.CatalogOrderResponse;
 import com.elevata.marketplace.catalogs.CatalogService;
 import com.elevata.marketplace.security.CurrentUser;
-import com.elevata.marketplace.stock.StockUnitsUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 class CartServiceImpl implements CartService {
@@ -53,10 +51,6 @@ class CartServiceImpl implements CartService {
         Cart cart = CartMapper.toEntity(cartRequest, totalPrice, id, CartStatus.CART);
         cart = cartRepository.save(cart);
 
-        int updatedQuantity = catalogOrderInfo.quantity() - cart.getQuantity();
-        eventPublisher.publishEvent(new StockUnitsUpdate(catalogOrderInfo.stockId(),
-                updatedQuantity));
-
         log.info("[From the cart service] Cart saved : {}", cartRequest);
         return makeDto(cart);
     }
@@ -68,12 +62,6 @@ class CartServiceImpl implements CartService {
 
         cart.setCartStatus(CartStatus.REMOVED);
         cartRepository.save(cart);
-
-        //Update the stock
-        CatalogOrderInfo catalogOrderInfo = catalogService.getCatalogOrderInfo(cart.getCatalogId());
-        int updatedQuantity = cart.getQuantity() + catalogOrderInfo.quantity();
-        eventPublisher.publishEvent(new StockUnitsUpdate(catalogOrderInfo.stockId(),
-                updatedQuantity));
 
         log.info("[From the cart service] Cart removed");
         return makeDto(cart);
@@ -100,6 +88,56 @@ class CartServiceImpl implements CartService {
         return "Cart status : " + cart.getCartStatus().name();
     }
 
+    @Override
+    @Transactional
+    public String allCartsToOrder() {
+        List<Cart> carts = fetchAllCarts();
+        if (carts.isEmpty()) {
+            return "Customer doesn't have a cart.";
+        }
+
+        List<CartOrderRequest> orderRequestList = new ArrayList<>(carts.size());
+
+        carts.forEach(cart -> {
+            CatalogOrderResponse catalogOrderResponse = catalogService
+                    .getCatalogOrderResponse(cart.getCatalogId());
+            CartOrderRequest orderRequest = CartMapper.toCartOrderDto(cart, catalogOrderResponse);
+            orderRequestList.add(orderRequest);
+        });
+
+        eventPublisher.publishEvent(new BulkCartOrderRequest(orderRequestList));
+
+        carts.forEach(cart -> {
+            cart.setCartStatus(CartStatus.ORDERED);
+        });
+
+        cartRepository.saveAll(carts);
+
+        log.info("[All carts order request sent] From the Cart service");
+        return "Bulk order request sent.";
+    }
+
+    @Override
+    public List<CartResponse> findAllActive() {
+        List<Cart> carts = fetchAllCarts();
+
+        List<CartResponse> cartResponseList = new ArrayList<>(carts.size());
+        carts.forEach(cart -> {
+            CatalogOrderResponse catalogOrderResponse = catalogService
+                    .getCatalogOrderResponse(cart.getCatalogId());
+            CartResponse cartResponse = new CartResponse(catalogOrderResponse,
+                    cart.getQuantity(),
+                    cart.getTotalPrice(),
+                    cart.getCartStatus(),
+                    cart.getCustomerId());
+
+            cartResponseList.add(cartResponse);
+        });
+
+        log.info("[Cart response list created] From the Carts service");
+        return cartResponseList;
+    }
+
     private CartResponse makeDto(Cart cart) {
         CatalogOrderResponse catalogOrderResponse = catalogService
                 .getCatalogOrderResponse(cart.getCatalogId());
@@ -109,5 +147,12 @@ class CartServiceImpl implements CartService {
     private Cart fetchCart(Long cartId) {
         return cartRepository.findById(cartId)
                 .orElseThrow(() -> new CartNotFoundException("Invalid cart id " + cartId));
+    }
+
+    private List<Cart> fetchAllCarts() {
+        Long id = currentUser.id();
+
+        return cartRepository.findAllActiveByCustomerId(id)
+                .orElseThrow(() -> new CartNotFoundException("Carts not found for the customer."));
     }
 }
