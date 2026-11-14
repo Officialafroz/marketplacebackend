@@ -2,6 +2,7 @@ package com.elevata.marketplace.orders.domain;
 
 import com.elevata.marketplace.address.AddressResponse;
 import com.elevata.marketplace.address.AddressService;
+import com.elevata.marketplace.carts.CartOrderRequest;
 import com.elevata.marketplace.catalogs.CatalogOrderInfo;
 import com.elevata.marketplace.catalogs.CatalogOrderResponse;
 import com.elevata.marketplace.catalogs.CatalogResponse;
@@ -86,6 +87,37 @@ class OrderServiceImpl implements OrderService {
          */
         log.info("[Order canceled] From the order service");
         return makeDto(order);
+    }
+
+    @Override
+    public void cartToOrder(CartOrderRequest cartOrderRequest) {
+        CatalogOrderInfo catalogOrderInfo = catalogService
+                .getCatalogOrderInfo(cartOrderRequest
+                        .catalogOrderResponse().catalogId());
+        //Make sure we have the stock
+        if (cartOrderRequest.quantity() > catalogOrderInfo.quantity()) {
+            throw new OrderQuantityLimitReachedException("Quantity is above the stock!");
+        }
+
+        Long addressId = addressService
+                .getDefaultAddressByCustomerId(cartOrderRequest.customerId());
+        OrderRequest orderRequest = new OrderRequest(cartOrderRequest
+                .catalogOrderResponse().catalogId(),
+                addressId,
+                cartOrderRequest.quantity(),
+                PaymentOption.CASH_ON_DELIVERY.name());
+
+        Order order = OrderMapper.toEntity(orderRequest, cartOrderRequest.customerId(),
+                cartOrderRequest.totalPrice(), OrderStatus.PLACED);
+
+        orderRepository.save(order);
+
+        //Update the stock
+        int updatedQuantity = catalogOrderInfo.quantity() - orderRequest.quantity();
+        eventPublisher.publishEvent(new StockUnitsUpdate(catalogOrderInfo.stockId(),
+                updatedQuantity));
+
+        log.info("[From the order service] cart order created info: {}", cartOrderRequest);
     }
 
     private OrderResponse makeDto(Order order) {

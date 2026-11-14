@@ -27,4 +27,9 @@ class CartController {
     CartResponse remove(@PathVariable Long cartId) {
         return cartService.remove(cartId);
     }
+
+    @PostMapping("purchase/{cartId}")
+    String toOrder(@PathVariable Long cartId) {
+        return cartService.toOrder(cartId);
+    }
 }

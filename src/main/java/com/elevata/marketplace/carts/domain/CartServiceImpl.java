@@ -1,5 +1,6 @@
 package com.elevata.marketplace.carts.domain;
 
+import com.elevata.marketplace.carts.CartOrderRequest;
 import com.elevata.marketplace.carts.CartRequest;
 import com.elevata.marketplace.carts.CartResponse;
 import com.elevata.marketplace.carts.CartService;
@@ -63,8 +64,7 @@ class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public CartResponse remove(Long cartId) {
-        Cart cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new CartNotFoundException("Invalid cart id " + cartId));
+        Cart cart = fetchCart(cartId);
 
         cart.setCartStatus(CartStatus.REMOVED);
         cartRepository.save(cart);
@@ -72,18 +72,42 @@ class CartServiceImpl implements CartService {
         //Update the stock
         CatalogOrderInfo catalogOrderInfo = catalogService.getCatalogOrderInfo(cart.getCatalogId());
         int updatedQuantity = cart.getQuantity() + catalogOrderInfo.quantity();
-        log.info("Before publishing the event");
         eventPublisher.publishEvent(new StockUnitsUpdate(catalogOrderInfo.stockId(),
                 updatedQuantity));
-        log.info("After publishing the event");
 
         log.info("[From the cart service] Cart removed");
         return makeDto(cart);
+    }
+
+    @Override
+    @Transactional
+    public String toOrder(Long cartId) {
+        Cart cart = fetchCart(cartId);
+        if (cart.getCartStatus().equals(CartStatus.CART)) {
+            CatalogOrderResponse catalogOrderResponse = catalogService
+                    .getCatalogOrderResponse(cart.getCatalogId());
+
+            CartOrderRequest orderRequest = CartMapper.toCartOrderDto(cart,
+                    catalogOrderResponse);
+            eventPublisher.publishEvent(orderRequest);
+
+            cart.setCartStatus(CartStatus.ORDERED);
+            cart = cartRepository.save(cart);
+
+            log.info("[Cart order request sent] Order request : {}", orderRequest);
+            return "Order request sent.";
+        }
+        return "Cart status : " + cart.getCartStatus().name();
     }
 
     private CartResponse makeDto(Cart cart) {
         CatalogOrderResponse catalogOrderResponse = catalogService
                 .getCatalogOrderResponse(cart.getCatalogId());
         return CartMapper.toDto(cart, catalogOrderResponse);
+    }
+
+    private Cart fetchCart(Long cartId) {
+        return cartRepository.findById(cartId)
+                .orElseThrow(() -> new CartNotFoundException("Invalid cart id " + cartId));
     }
 }

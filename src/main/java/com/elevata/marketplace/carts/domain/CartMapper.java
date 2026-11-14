@@ -1,5 +1,6 @@
 package com.elevata.marketplace.carts.domain;
 
+import com.elevata.marketplace.carts.CartOrderRequest;
 import com.elevata.marketplace.carts.CartRequest;
 import com.elevata.marketplace.carts.CartResponse;
 import com.elevata.marketplace.catalogs.CatalogOrderResponse;
@@ -23,6 +24,13 @@ class CartMapper {
                 cart.getQuantity(),
                 cart.getTotalPrice(),
                 cart.getCartStatus(),
+                cart.getCustomerId());
+    }
+
+    static CartOrderRequest toCartOrderDto(Cart cart, CatalogOrderResponse catalogOrderResponse) {
+        return new CartOrderRequest(catalogOrderResponse,
+                cart.getQuantity(),
+                cart.getTotalPrice(),
                 cart.getCustomerId());
     }
 }

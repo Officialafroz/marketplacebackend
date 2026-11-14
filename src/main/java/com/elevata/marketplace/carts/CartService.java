@@ -7,4 +7,6 @@ public interface CartService {
     CartResponse addToCart(CartRequest cartRequest);
 
     CartResponse remove(Long cartId);
+
+    String toOrder(Long cartId);
 }
