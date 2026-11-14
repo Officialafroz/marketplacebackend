@@ -3,6 +3,7 @@ package com.elevata.marketplace.address.web.controller;
 import com.elevata.marketplace.address.AddressResponse;
 import com.elevata.marketplace.address.AddressService;
 import com.elevata.marketplace.address.domain.AddressRequest;
+import com.elevata.marketplace.address.domain.AddressUpdateRequest;
 import com.elevata.marketplace.validations.ValidZipcode;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +27,7 @@ class AddressController {
 
     @PatchMapping("{addressId}")
     AddressResponse update(@PathVariable Long addressId,
-                                  @RequestParam(required = false) String street,
-                                  @RequestParam(required = false) String society,
-                                  @RequestParam(required = false) String townVillageCity,
-                                  @ValidZipcode @RequestParam(required = false) String zipcode
-    ) {
-        return addressService.update(addressId, street, society, townVillageCity, zipcode);
+                           @RequestBody AddressUpdateRequest updateRequest) {
+        return addressService.update(addressId, updateRequest);
     }
 }
