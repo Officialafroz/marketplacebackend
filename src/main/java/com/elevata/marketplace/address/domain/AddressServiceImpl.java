@@ -34,6 +34,10 @@ class AddressServiceImpl implements AddressService {
             throw new InvalidCountryException("Invalid country " + addressRequest.country());
         }
 
+        //Check the default address
+        if (addressRequest.isDefault()) {
+
+        }
         Address address = AddressMapper.toEntity(addressRequest, appUserId);
 
         address = addressRepository.save(address);
@@ -42,46 +46,51 @@ class AddressServiceImpl implements AddressService {
 
     @Override
     @Transactional
-    public AddressResponse update(Long addressId, String street, String society, String townVillageCity, String zipcode) {
+    public AddressResponse update(Long addressId, AddressUpdateRequest updateRequest) {
         Address address = addressRepository.findByAddressIdAndAppUserId(addressId, currentUser.id())
                 .orElseThrow(() -> new AddressNotFoundException("Invalid addressId " + addressId));
-        int counter = 0;
+        boolean isUpdated = false;
 
         try {
-
-            if (!checkNull(street)) {
-                address.setStreet(street);
-                counter++;
+            if (!checkNull(updateRequest.street())) {
+                address.setStreet(updateRequest.street());
+                isUpdated = true;
             }
 
-            if (!checkNull(society)) {
-                address.setSociety(society);
-                counter++;
+            if (!checkNull(updateRequest.society())) {
+                address.setSociety(updateRequest.society());
+                isUpdated = true;
             }
 
-            if (!checkNull(townVillageCity)) {
-                address.setTownVillageCity(townVillageCity);
+            if (!checkNull(updateRequest.townVillageCity())) {
+                address.setTownVillageCity(updateRequest.townVillageCity());
 
-                if (!checkNull(zipcode)) {
-                    address.setZipcode(zipcode);
-                    counter++;
+                if (!checkNull(updateRequest.zipcode())) {
+                    address.setZipcode(updateRequest.zipcode());
                 } else {
-                    throw new RuntimeException("Cannot update zipcode. townVillageCity field required.");
+                    throw new RuntimeException("Cannot update zipcode. Field required.");
                 }
-                counter++;
+                isUpdated =  true;
             }
 
-            if (counter == 0) {
+            if (updateRequest.isDefault() != null && updateRequest.isDefault()) {
+                //What will happen if there isn't a default address?
+                log.info("[Inside update default if]");
+                handleDefaultAddress(address.getAppUserId());
+                address.setDefault(true);
+                isUpdated = true;
+            }
+
+            if (!isUpdated) {
                 throw new RuntimeException("Cannot update. Please add at least 1 field.");
             }
-
-
         } catch (NullPointerException e) {
             log.info(e.getMessage());
             throw e;
         }
 
         address = addressRepository.save(address);
+        log.info("[Address updated] From the Address service");
         return AddressMapper.toDto(address);
     }
 
@@ -91,6 +100,17 @@ class AddressServiceImpl implements AddressService {
                 .orElseThrow(() -> new AddressNotFoundException("Invalid addressId " + addressId));
 
         return AddressMapper.toDto(address);
+    }
+
+    private void handleDefaultAddress(Long appUserId) {
+        addressRepository.getDefaultAddressByCustomerId(appUserId)
+                .ifPresent(address -> {
+                    address.setDefault(false);
+                    addressRepository.save(address);
+                    log.info("[Old default removed] From the Address service");
+                });
+
+        log.info("[Old default address doesn't exist] From the Address service");
     }
 
     private boolean checkNull(String value) throws NullPointerException {
