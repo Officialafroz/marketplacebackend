@@ -55,12 +55,13 @@ class CatalogServiceImpl implements CatalogService {
                 .orElseThrow(() -> new CatalogNotFoundException("Catalog not found for stock id " 
                         + stockUpdate.stockId()));
 
-        byte count = 0;
+        boolean isUpdated = false;
         StockStatus stockStatus = null;
 
         if (stockUpdate.units() != null && stockUpdate.units() > 0) {
-            catalog.setUnits(stockUpdate.units());
-            count++;
+            int updatedUnits = catalog.getUnits() + stockUpdate.units();
+            catalog.setUnits(updatedUnits);
+            isUpdated = true;
         }
 
         if (stockStatus != null && (StockStatus.OUT_OF_STOCK.equals(stockUpdate.stockStatus())
@@ -68,10 +69,10 @@ class CatalogServiceImpl implements CatalogService {
                 || StockStatus.EXPIRED.equals(stockUpdate.stockStatus()))
         ) {
             catalog.setStockStatus(stockStatus);
-            count++;
+            isUpdated = true;
         }
 
-        if (count == 0) {
+        if (!isUpdated) {
             throw new RuntimeException("At least 1 field is required");
         }
 
