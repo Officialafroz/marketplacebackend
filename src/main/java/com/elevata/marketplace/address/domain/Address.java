@@ -19,6 +19,7 @@ class Address {
     @Enumerated(EnumType.STRING)
     private Country country;
     private String zipcode;
+    private boolean isDefault;
     private Long appUserId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -26,13 +27,14 @@ class Address {
     public Address() {
     }
 
-    public Address(String street, String society, String townVillageCity, String state, Country country, String zipcode, Long appUserId) {
+    public Address(String street, String society, String townVillageCity, String state, Country country, String zipcode, boolean isDefault, Long appUserId) {
         this.street = street;
         this.society = society;
         this.townVillageCity = townVillageCity;
         this.state = state;
         this.country = country;
         this.zipcode = zipcode;
+        this.isDefault = isDefault;
         this.appUserId = appUserId;
     }
 
@@ -90,5 +92,13 @@ class Address {
 
     public void setZipcode(String zipcode) {
         this.zipcode = zipcode;
+    }
+
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(boolean aDefault) {
+        this.isDefault = aDefault;
     }
 }

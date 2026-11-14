@@ -8,6 +8,7 @@ public record AddressResponse(
         String State,
         String country,
         String zipcode,
+        boolean isDefault,
         Long appUserId
 ) {
 }

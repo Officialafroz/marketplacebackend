@@ -12,6 +12,7 @@ class AddressMapper {
                 entity.getState(),
                 entity.getCountry().name(),
                 entity.getZipcode(),
+                entity.isDefault(),
                 entity.getAppUserId());
     }
 
@@ -22,6 +23,7 @@ class AddressMapper {
                 request.state(),
                 Country.valueOf(request.country().toUpperCase()),
                 request.zipcode(),
+                request.isDefault(),
                 appUserId);
     }
 }
