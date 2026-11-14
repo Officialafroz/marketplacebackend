@@ -16,6 +16,8 @@ public record AddressRequest(
         @NotNull @NotBlank
         String country,
         @NotNull @ValidZipcode
-        String zipcode
+        String zipcode,
+        @NotNull
+        Boolean isDefault
 ) {
 }
