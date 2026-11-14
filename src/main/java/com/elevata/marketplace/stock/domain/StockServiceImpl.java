@@ -4,6 +4,7 @@ import com.elevata.marketplace.stock.StockResponse;
 import com.elevata.marketplace.stock.StockService;
 import com.elevata.marketplace.stock.StockStatus;
 import com.elevata.marketplace.stock.StockUpdate;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,14 +47,18 @@ class StockServiceImpl implements StockService {
 
     @Override
     @Transactional
-    public StockResponse updateUnitsOrStatus(Long stockId, Integer units, String status) {
+    public StockResponse updateUnitsOrStatus(Long stockId,
+                                             @Nullable Integer units,
+                                             @Nullable String status
+    ) {
         Stock s = fetchStock(stockId);
-        byte count = 0;
+        boolean isUpdated = false;
         StockStatus stockStatus = null;
 
         if (units != null && units > 0) {
-            s.setUnits(units);
-            count++;
+            int updatedUnits = s.getUnits() + units;
+            s.setUnits(updatedUnits);
+            isUpdated = true;
         }
 
         //Analyze
@@ -63,10 +68,10 @@ class StockServiceImpl implements StockService {
         ) {
             stockStatus = StockStatus.valueOf(status.toUpperCase());
             s.setStockStatus(stockStatus);
-            count++;
+            isUpdated = true;
         }
 
-        if (count == 0) {
+        if (!isUpdated) {
             throw new RuntimeException("At least 1 field is required");
         }
 
