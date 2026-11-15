@@ -5,6 +5,7 @@ import com.elevata.marketplace.user.AppUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,12 +17,14 @@ class OtpServiceImpl implements OtpService {
     private final AppUserService appUserService;
     private final OtpRepository otpRepository;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public OtpServiceImpl(AppUserService appUserService, OtpRepository otpRepository, EmailService emailService) {
+    public OtpServiceImpl(AppUserService appUserService, OtpRepository otpRepository, EmailService emailService, PasswordEncoder passwordEncoder) {
         this.appUserService = appUserService;
         this.otpRepository = otpRepository;
         this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -29,17 +32,20 @@ class OtpServiceImpl implements OtpService {
     public String create(String email) {
         Long appUserId = appUserService.getIdByEmail(email);
         LocalDateTime expiresAt = otpRepository
-                .findByAppUserIdOrderByCreatedAtDesc(appUserId).getExpiresAt();
+                .findByAppUserIdOrderByCreatedAtDesc(appUserId)
+                .orElseThrow(() -> new OtpNotFoundException("Invalid user email " + email))
+                .getExpiresAt();
 
         if (expiresAt.isBefore(LocalDateTime.now())) {
-            String otpValue = OtpGenerator.generateNumericOtp(6);
+            String rawOtp = OtpGenerator.generateNumericOtp(6);
+            String saltedHash = passwordEncoder.encode(rawOtp);
 
-            Otp otp = new Otp(otpValue, appUserId);
+            Otp otp = new Otp(saltedHash, appUserId);
             otpRepository.save(otp);
 
-            String text = "Your otp for login " + otpValue;
+            String text = "Your otp for login " + rawOtp;
             emailService.send(email, "Login credentials", text);
-            log.info("OTP generated: {}", otpValue);
+            log.info("OTP generated: {}", rawOtp);
             return "Otp generated for email " + email;
         }
 
@@ -50,9 +56,15 @@ class OtpServiceImpl implements OtpService {
     @Override
     public boolean verifyOtp(OtpRequest otpRequest) {
         Long appUserId = appUserService.getIdByEmail(otpRequest.email());
-        Otp otp = otpRepository.findByAppUserIdOrderByCreatedAtDesc(appUserId);
+        Otp otp = otpRepository.findByAppUserIdOrderByCreatedAtDesc(appUserId)
+                .orElseThrow(() -> new OtpNotFoundException("Invalid user email "
+                        + otpRequest.email()));
 
-        return otp.getExpiresAt().isAfter(LocalDateTime.now())
-                && otp.getOtpValue().equals(otpRequest.otpValue());
+        if (otp.getExpiresAt().isAfter(LocalDateTime.now())) {
+            return passwordEncoder.matches(otpRequest.otpValue(),
+                    otp.getOtpValue());
+        }
+
+        return false;
     }
 }
