@@ -36,7 +36,7 @@ class AddressServiceImpl implements AddressService {
 
         //Check the default address
         if (addressRequest.isDefault()) {
-
+            handleDefaultAddress(appUserId);
         }
         Address address = AddressMapper.toEntity(addressRequest, appUserId);
 
