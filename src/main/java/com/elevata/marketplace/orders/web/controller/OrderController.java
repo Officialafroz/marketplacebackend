@@ -4,6 +4,7 @@ import com.elevata.marketplace.orders.OrderResponse;
 import com.elevata.marketplace.orders.OrderService;
 import com.elevata.marketplace.orders.domain.OrderRequest;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,17 +20,17 @@ class OrderController {
     }
 
     @PostMapping
-    OrderResponse save(@Valid @RequestBody OrderRequest orderRequest) {
+    ResponseEntity<OrderResponse> save(@Valid @RequestBody OrderRequest orderRequest) {
         return orderService.save(orderRequest);
     }
 
     @GetMapping("list/active")
-    List<OrderResponse> findAll() {
+    ResponseEntity<List<OrderResponse>> findAll() {
         return orderService.findAllActive();
     }
 
     @PostMapping("cancel/{orderId}")
-    OrderResponse cancel(@PathVariable Long orderId) {
+    ResponseEntity<OrderResponse> cancel(@PathVariable Long orderId) {
         return orderService.cancel(orderId);
     }
 }

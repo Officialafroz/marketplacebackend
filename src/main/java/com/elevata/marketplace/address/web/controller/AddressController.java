@@ -7,6 +7,7 @@ import com.elevata.marketplace.address.domain.AddressUpdateRequest;
 import com.elevata.marketplace.validations.ValidZipcode;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,12 +22,12 @@ class AddressController {
     }
 
     @PostMapping
-    AddressResponse save(@Valid @RequestBody AddressRequest addressRequest) {
+    ResponseEntity<AddressResponse> save(@Valid @RequestBody AddressRequest addressRequest) {
         return addressService.save(addressRequest);
     }
 
     @PatchMapping("{addressId}")
-    AddressResponse update(@PathVariable Long addressId,
+    ResponseEntity<AddressResponse> update(@PathVariable Long addressId,
                            @RequestBody AddressUpdateRequest updateRequest) {
         return addressService.update(addressId, updateRequest);
     }

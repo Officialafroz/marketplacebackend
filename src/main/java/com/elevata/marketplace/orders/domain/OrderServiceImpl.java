@@ -14,6 +14,8 @@ import com.elevata.marketplace.stock.StockUnitsUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +43,7 @@ class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderResponse save(OrderRequest orderRequest) {
+    public ResponseEntity<OrderResponse> save(OrderRequest orderRequest) {
         Long id = currentUser.id();
         CatalogOrderInfo catalogOrderInfo = catalogService.getCatalogOrderInfo(orderRequest.catalogId());
         //Make sure we have the stock
@@ -62,18 +64,21 @@ class OrderServiceImpl implements OrderService {
                 updatedQuantity));
 
         log.info("[From the order service] order created info: {}", orderRequest);
-        return makeDto(order);
+        OrderResponse orderResponse = makeDto(order);
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderResponse);
     }
 
     //Canceled ordered cannot be used again
     @Override
     @Transactional
-    public OrderResponse cancel(Long orderId) {
+    public ResponseEntity<OrderResponse> cancel(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Invalid order id " + orderId));
+        OrderResponse orderResponse = null;
 
         if (order.getOrderStatus().equals(OrderStatus.CANCELED)) {
-            return makeDto(order);
+            orderResponse = makeDto(order);
+            return ResponseEntity.ok(orderResponse);
         }
         order.setOrderStatus(OrderStatus.CANCELED);
         orderRepository.save(order);
@@ -87,7 +92,8 @@ class OrderServiceImpl implements OrderService {
             Add handling of payment when the order is canceled
          */
         log.info("[Order canceled] From the order service");
-        return makeDto(order);
+        orderResponse = makeDto(order);
+        return ResponseEntity.ok(orderResponse);
     }
 
     @Override
@@ -132,7 +138,7 @@ class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponse> findAllActive() {
+    public ResponseEntity<List<OrderResponse>> findAllActive() {
         Long id = currentUser.id();
         List<Order> orders = orderRepository.findAllByCustomerIdAndOrderStatus(id,
                 OrderStatus.PLACED);
@@ -140,7 +146,7 @@ class OrderServiceImpl implements OrderService {
 
         orders.forEach(order -> orderResponses.add(makeDto(order)));
 
-        return orderResponses;
+        return ResponseEntity.status(HttpStatus.OK).body(orderResponses);
     }
 
     private OrderResponse makeDto(Order order) {

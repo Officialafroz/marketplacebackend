@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,24 +23,24 @@ class AuthController {
     }
 
     @PostMapping("register")
-    String register(HttpServletResponse response,
-                                   @Valid @RequestBody AddAppUser appUser) {
+    ResponseEntity<String> register(HttpServletResponse response,
+                                    @Valid @RequestBody AddAppUser appUser) {
         return authService.register(response, appUser);
     }
 
     @PostMapping("login")
-    String login(@Valid @RequestBody OtpEmailRequest otpEmailRequest) {
+    ResponseEntity<String> login(@Valid @RequestBody OtpEmailRequest otpEmailRequest) {
         return authService.login(otpEmailRequest);
     }
 
     @PostMapping("verify/otp")
-    String verify(HttpServletResponse response,
+    ResponseEntity<String> verify(HttpServletResponse response,
                          @Valid @RequestBody OtpRequest otpRequest) {
         return authService.verify(response, otpRequest);
     }
 
     @PostMapping("refresh")
-    String refresh(HttpServletRequest request, HttpServletResponse response) {
+    ResponseEntity<String> refresh(HttpServletRequest request, HttpServletResponse response) {
         return authService.refresh(request, response);
     }
 }

@@ -6,6 +6,8 @@ import com.elevata.marketplace.address.AddressService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +25,7 @@ class AddressServiceImpl implements AddressService {
 
     @Override
     @Transactional
-    public AddressResponse save(AddressRequest addressRequest) {
+    public ResponseEntity<AddressResponse> save(AddressRequest addressRequest) {
         Long appUserId = currentUser.id();
 
         if (addressRepository.countByAppUserId(appUserId) == 5) {
@@ -41,12 +43,14 @@ class AddressServiceImpl implements AddressService {
         Address address = AddressMapper.toEntity(addressRequest, appUserId);
 
         address = addressRepository.save(address);
-        return AddressMapper.toDto(address);
+        AddressResponse addressResponse = AddressMapper.toDto(address);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(addressResponse);
     }
 
     @Override
     @Transactional
-    public AddressResponse update(Long addressId, AddressUpdateRequest updateRequest) {
+    public ResponseEntity<AddressResponse> update(Long addressId, AddressUpdateRequest updateRequest) {
         Address address = addressRepository.findByAddressIdAndAppUserId(addressId, currentUser.id())
                 .orElseThrow(() -> new AddressNotFoundException("Invalid addressId " + addressId));
         boolean isUpdated = false;
@@ -91,7 +95,8 @@ class AddressServiceImpl implements AddressService {
 
         address = addressRepository.save(address);
         log.info("[Address updated] From the Address service");
-        return AddressMapper.toDto(address);
+        AddressResponse addressResponse = AddressMapper.toDto(address);
+        return ResponseEntity.ok(addressResponse);
     }
 
     @Override

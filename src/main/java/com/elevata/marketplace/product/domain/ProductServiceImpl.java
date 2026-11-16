@@ -6,6 +6,8 @@ import com.elevata.marketplace.security.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,25 +27,27 @@ class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public ProductResponse save(AddProduct product) {
+    public ResponseEntity<ProductResponse> save(AddProduct product) {
         Long sellerId = currentUser.id();
         Product p = ProductMapper.toEntity(product, sellerId);
 //        Why product status as null?
         p = productRepository.save(p);
 
-        return ProductMapper.toDto(p);
+        ProductResponse productResponse = ProductMapper.toDto(p);
+        return ResponseEntity.status(HttpStatus.CREATED).body(productResponse);
     }
 
     @Override
-    public Page<ProductResponse> getProducts(int pageNumber) {
+    public ResponseEntity<Page<ProductResponse>> getProducts(int pageNumber) {
         Long sellerId = currentUser.id();
-        return productRepository.getProducts(sellerId, PageRequest.of(pageNumber,
-                PRODUCT_PAGE_SIZE));
+        Page<ProductResponse> productResponsePage = productRepository
+                .getProducts(sellerId, PageRequest.of(pageNumber, PRODUCT_PAGE_SIZE));
+        return ResponseEntity.ok(productResponsePage);
     }
 
     @Override
     @Transactional
-    public ProductResponse updateStatus(Long productId, String status) {
+    public ResponseEntity<ProductResponse> updateStatus(Long productId, String status) {
         Product p = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException("Product for id-" + productId + " not found."));
 
@@ -53,7 +57,8 @@ class ProductServiceImpl implements ProductService {
             p.setProductStatus(ProductStatus.valueOf(status.toUpperCase()));
             productRepository.save(p);
 
-            return ProductMapper.toDto(p);
+            ProductResponse productResponse = ProductMapper.toDto(p);
+            return ResponseEntity.ok(productResponse);
         }
 
         throw new InvalidProductStatusException("Invalid status");

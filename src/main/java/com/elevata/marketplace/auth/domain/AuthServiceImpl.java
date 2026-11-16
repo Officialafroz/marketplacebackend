@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +38,7 @@ class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public String register(HttpServletResponse response, AddAppUser appUser) {
+    public ResponseEntity<String> register(HttpServletResponse response, AddAppUser appUser) {
         if (!appUserService.validateUser(appUser.email())) {
 //          log.info("[Publishing the save event]", appUser);
 //          eventPublisher.publishEvent(appUser);
@@ -48,42 +50,47 @@ class AuthServiceImpl implements AuthService {
             */
             handleToken(response, appUserDto.appUserId(), appUserDto.role().name());
 
-          return "Account created for user.";
+          return ResponseEntity.status(HttpStatus.CREATED)
+                  .body("Account created for user.");
         }
 
-        return "App user already exists for email " + appUser.email();
+        return ResponseEntity.ok("App user already exists for email "
+                + appUser.email());
     }
 
     @Override
     @Transactional
-    public String login(OtpEmailRequest otpEmailRequest) {
+    public ResponseEntity<String> login(OtpEmailRequest otpEmailRequest) {
         if (!appUserService.validateUser(otpEmailRequest.email())) {
-            return "User does not exist for email " + otpEmailRequest.email();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("User does not exist for email " + otpEmailRequest.email());
         }
 
-        return otpService.create(otpEmailRequest.email());
+        return ResponseEntity.ok(otpService.create(otpEmailRequest.email()));
     }
 
     @Override
-    public String verify(HttpServletResponse response, OtpRequest otpRequest) {
+    public ResponseEntity<String> verify(HttpServletResponse response, OtpRequest otpRequest) {
         if (!appUserService.validateUser(otpRequest.email())) {
-            return "User does not exist for email " + otpRequest.email();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("User does not exist for email " + otpRequest.email());
         }
 
         if (!otpService.verifyOtp(otpRequest)) {
             log.info("[Invalid OTP] From the Auth Service");
-            return "Invalid OTP";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid OTP");
         }
 
         AppUserDto appUserDto = appUserService.findByEmail(otpRequest.email());
         handleToken(response, appUserDto.appUserId(), appUserDto.role().name());
 
         log.info("[User authorized] From the Auth Service");
-        return "User authorized.";
+        return ResponseEntity.ok("User authorized.");
     }
 
     @Override
-    public String refresh(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<String> refresh(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = cookieService.extractRefreshTokenFromCookie(request);
         RefreshToken tokenEntity = refreshTokenService.validateRefreshToken(refreshToken);
         AppUserDto appUserDto = appUserService.findById(tokenEntity.getAppUserId());
@@ -92,7 +99,7 @@ class AuthServiceImpl implements AuthService {
         handleToken(response, appUserDto.appUserId(), appUserDto.role().name());
 
         log.info("[Access token created] From the Auth service");
-        return "Access token created.";
+        return ResponseEntity.status(HttpStatus.CREATED).body("Access token created.");
     }
 
     private void handleToken(HttpServletResponse response, Long appUserId, String role) {

@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +37,7 @@ class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartResponse addToCart(CartRequest cartRequest) {
+    public ResponseEntity<CartResponse> addToCart(CartRequest cartRequest) {
         Long id = currentUser.id();
         CatalogOrderInfo catalogOrderInfo = catalogService
                 .getCatalogOrderInfo(cartRequest.catalogId());
@@ -52,24 +54,26 @@ class CartServiceImpl implements CartService {
         cart = cartRepository.save(cart);
 
         log.info("[From the cart service] Cart saved : {}", cartRequest);
-        return makeDto(cart);
+        CartResponse cartResponse = makeDto(cart);
+        return ResponseEntity.status(HttpStatus.CREATED).body(cartResponse);
     }
 
     @Override
     @Transactional
-    public CartResponse remove(Long cartId) {
+    public ResponseEntity<CartResponse> remove(Long cartId) {
         Cart cart = fetchCart(cartId);
 
         cart.setCartStatus(CartStatus.REMOVED);
         cartRepository.save(cart);
 
         log.info("[From the cart service] Cart removed");
-        return makeDto(cart);
+        CartResponse cartResponse = makeDto(cart);
+        return ResponseEntity.ok(cartResponse);
     }
 
     @Override
     @Transactional
-    public String toOrder(Long cartId) {
+    public ResponseEntity<String> toOrder(Long cartId) {
         Cart cart = fetchCart(cartId);
         if (cart.getCartStatus().equals(CartStatus.CART)) {
             CatalogOrderResponse catalogOrderResponse = catalogService
@@ -83,17 +87,18 @@ class CartServiceImpl implements CartService {
             cart = cartRepository.save(cart);
 
             log.info("[Cart order request sent] Order request : {}", orderRequest);
-            return "Order request sent.";
+            return ResponseEntity.ok("Order request sent.");
         }
-        return "Cart status : " + cart.getCartStatus().name();
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT)
+                .body("Can't order it.");
     }
 
     @Override
     @Transactional
-    public String allCartsToOrder() {
+    public ResponseEntity<String> allCartsToOrder() {
         List<Cart> carts = fetchAllCarts();
         if (carts.isEmpty()) {
-            return "Customer doesn't have a cart.";
+            return ResponseEntity.ok("Customer doesn't have a cart.");
         }
 
         List<CartOrderRequest> orderRequestList = new ArrayList<>(carts.size());
@@ -114,11 +119,11 @@ class CartServiceImpl implements CartService {
         cartRepository.saveAll(carts);
 
         log.info("[All carts order request sent] From the Cart service");
-        return "Bulk order request sent.";
+        return ResponseEntity.ok("Bulk order request sent.");
     }
 
     @Override
-    public List<CartResponse> findAllActive() {
+    public ResponseEntity<List<CartResponse>> findAllActive() {
         List<Cart> carts = fetchAllCarts();
 
         List<CartResponse> cartResponseList = new ArrayList<>(carts.size());
@@ -135,7 +140,7 @@ class CartServiceImpl implements CartService {
         });
 
         log.info("[Cart response list created] From the Carts service");
-        return cartResponseList;
+        return ResponseEntity.ok(cartResponseList);
     }
 
     private CartResponse makeDto(Cart cart) {

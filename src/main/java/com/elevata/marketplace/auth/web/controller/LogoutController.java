@@ -4,6 +4,7 @@ import com.elevata.marketplace.auth.domain.LogoutService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +23,7 @@ class LogoutController {
 
     // Why passing the id?
     @GetMapping("logout")
-    String logout(HttpServletRequest request, HttpServletResponse response) {
+    ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
         return logoutService.logout(request, response);
     }
 }

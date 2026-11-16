@@ -5,6 +5,7 @@ import com.elevata.marketplace.carts.CartService;
 import com.elevata.marketplace.carts.CartRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,27 +22,27 @@ class CartController {
     }
 
     @PostMapping
-    CartResponse addToCart(@Valid @RequestBody CartRequest cartRequest) {
+    ResponseEntity<CartResponse> addToCart(@Valid @RequestBody CartRequest cartRequest) {
         return cartService.addToCart(cartRequest);
     }
 
     @GetMapping("list/active")
-    List<CartResponse> findAll() {
+    ResponseEntity<List<CartResponse>> findAll() {
         return cartService.findAllActive();
     }
 
     @PostMapping("remove/{cartId}")
-    CartResponse remove(@PathVariable Long cartId) {
+    ResponseEntity<CartResponse> remove(@PathVariable Long cartId) {
         return cartService.remove(cartId);
     }
 
     @PostMapping("purchase/{cartId}")
-    String toOrder(@PathVariable Long cartId) {
+    ResponseEntity<String> toOrder(@PathVariable Long cartId) {
         return cartService.toOrder(cartId);
     }
 
     @PostMapping("purchase/all")
-    String allCartsToOrder() {
+    ResponseEntity<String> allCartsToOrder() {
         return cartService.allCartsToOrder();
     }
 }

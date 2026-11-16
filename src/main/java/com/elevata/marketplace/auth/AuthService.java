@@ -5,16 +5,17 @@ import com.elevata.marketplace.auth.domain.OtpRequest;
 import com.elevata.marketplace.user.AddAppUser;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
 public interface AuthService {
 
-    String register(HttpServletResponse response, AddAppUser appUser);
+    ResponseEntity<String> register(HttpServletResponse response, AddAppUser appUser);
 
-    String login(OtpEmailRequest otpEmailRequest);
+    ResponseEntity<String> login(OtpEmailRequest otpEmailRequest);
 
-    String verify(HttpServletResponse response, OtpRequest otpRequest);
+    ResponseEntity<String> verify(HttpServletResponse response, OtpRequest otpRequest);
 
-    String refresh(HttpServletRequest request, HttpServletResponse response);
+    ResponseEntity<String> refresh(HttpServletRequest request, HttpServletResponse response);
 }

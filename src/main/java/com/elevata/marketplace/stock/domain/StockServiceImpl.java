@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,27 +31,28 @@ class StockServiceImpl implements StockService {
 
     @Override
     @Transactional
-    public StockResponse add(AddStockForProduct stock) {
+    public ResponseEntity<StockResponse> add(AddStockForProduct stock) {
         Stock s = StockMapper.toEntity(stock);
         s = stockRepository.save(s);
         StockResponse stockResponse = StockMapper.convertToDto(s);
 
         eventPublisher.publishEvent(stockResponse);
 
-        return stockResponse;
+        return ResponseEntity.status(HttpStatus.CREATED).body(stockResponse);
     }
 
     @Override
-    public Page<StockResponse> getProductStock(int pageNumber) {
-        return stockRepository.getProductStock(PageRequest.of(pageNumber,
-                PRODUCT_PAGE_SIZE));
+    public ResponseEntity<Page<StockResponse>> getProductStock(int pageNumber) {
+        Page<StockResponse> stockResponsePage = stockRepository
+                .getProductStock(PageRequest.of(pageNumber, PRODUCT_PAGE_SIZE));
+        return ResponseEntity.ok(stockResponsePage);
     }
 
     @Override
     @Transactional
-    public StockResponse updateUnitsOrStatus(Long stockId,
-                                             @Nullable Integer units,
-                                             @Nullable String status
+    public ResponseEntity<StockResponse> updateUnitsOrStatus(Long stockId,
+                                                             @Nullable Integer units,
+                                                             @Nullable String status
     ) {
         Stock s = fetchStock(stockId);
         boolean isUpdated = false;
@@ -80,7 +83,8 @@ class StockServiceImpl implements StockService {
         eventPublisher.publishEvent(new StockUpdate(stockId, units, stockStatus));
         s = stockRepository.save(s);
 
-        return StockMapper.convertToDto(s);
+        StockResponse stockResponse = StockMapper.convertToDto(s);
+        return ResponseEntity.ok(stockResponse);
     }
 
     @Override

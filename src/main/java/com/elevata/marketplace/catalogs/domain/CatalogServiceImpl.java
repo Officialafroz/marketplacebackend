@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,8 +35,10 @@ class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public Page<CatalogResponse> getCatalogs(int pageNumber) {
-        return catalogRepository.findAllResponses(PageRequest.of(pageNumber, CATALOG_PAGE_SIZE));
+    public ResponseEntity<Page<CatalogResponse>> getCatalogs(int pageNumber) {
+        Page<CatalogResponse> catalogResponsePage = catalogRepository
+                .findAllResponses(PageRequest.of(pageNumber, CATALOG_PAGE_SIZE));
+        return ResponseEntity.ok(catalogResponsePage);
     }
 
     @Override
@@ -81,9 +84,10 @@ class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public Page<CatalogResponse> search(String productName, int pageNumber) {
-        return catalogRepository.search(productName,
-                PageRequest.of(pageNumber, CATALOG_PAGE_SIZE));
+    public ResponseEntity<Page<CatalogResponse>> search(String productName, int pageNumber) {
+        Page<CatalogResponse> catalogResponsePage = catalogRepository
+                .search(productName, PageRequest.of(pageNumber, CATALOG_PAGE_SIZE));
+        return ResponseEntity.ok(catalogResponsePage);
     }
 
     @Override

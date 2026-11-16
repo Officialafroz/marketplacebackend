@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -28,11 +30,13 @@ class LogoutServiceImpl implements LogoutService {
     }
 
     @Override
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
         Long id = currentUser.id();
 
+        // Is it really necessary to validate?
         if (!appUserService.validateById(id)) {
-            return "Can't logout session. Invalid id " + id;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Can't logout session. Invalid id " + id);
         }
 
         /*
@@ -53,6 +57,6 @@ class LogoutServiceImpl implements LogoutService {
         SecurityContextHolder.clearContext();
 
         log.info("[User has been logged out] From the Logout Service");
-        return "User has been logged out.";
+        return ResponseEntity.ok("User has been logged out.");
     }
 }
