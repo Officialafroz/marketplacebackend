@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ApplicationModuleTest
-@AutoConfigureMockMvc
 class ZipcodeValidatorTests {
 
     private ZipcodeValidator validator;
