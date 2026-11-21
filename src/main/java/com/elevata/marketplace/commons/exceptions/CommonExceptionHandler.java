@@ -1,6 +1,7 @@
 package com.elevata.marketplace.commons.exceptions;
 
 import com.elevata.marketplace.commons.ErrorResponse;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,7 +24,17 @@ class CommonExceptionHandler {
     }
 
     @ExceptionHandler(InvalidDataAccessResourceUsageException.class)
-    ErrorResponse handleInvalidDataAccessResourceUsageExceptionError(InvalidDataAccessResourceUsageException e) {
+    ErrorResponse handleInvalidDataAccessResourceUsageError(InvalidDataAccessResourceUsageException e) {
+        return new ErrorResponse(e.getMessage(), LocalDateTime.now());
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    ErrorResponse handleConstraintViolationError(ConstraintViolationException e) {
+        return new ErrorResponse(e.getMessage(), LocalDateTime.now());
+    }
+
+    @ExceptionHandler(OutOfStockException.class)
+    ErrorResponse handleOutOfStockError(OutOfStockException e) {
         return new ErrorResponse(e.getMessage(), LocalDateTime.now());
     }
 }
