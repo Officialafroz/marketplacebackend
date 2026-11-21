@@ -31,6 +31,7 @@ class ProductController {
         return productService.getProducts(pageNumber);
     }
 
+    // Marked for removal
     @PatchMapping("product/{productId}")
     ResponseEntity<ProductResponse> updateStatus(@PathVariable Long productId,
                                  @RequestParam String status
