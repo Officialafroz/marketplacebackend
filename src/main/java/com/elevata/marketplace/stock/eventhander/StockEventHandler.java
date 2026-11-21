@@ -1,7 +1,8 @@
 package com.elevata.marketplace.stock.eventhander;
 
+import com.elevata.marketplace.stock.AddStock;
+import com.elevata.marketplace.stock.ReduceStock;
 import com.elevata.marketplace.stock.StockService;
-import com.elevata.marketplace.stock.StockUnitsUpdate;
 import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +15,12 @@ class StockEventHandler {
     }
 
     @ApplicationModuleListener
-    void handle(StockUnitsUpdate stock) {
-        stockService.updateUnits(stock.stockId(), stock.units());
+    void handle(ReduceStock stock) {
+        stockService.reduceStock(stock.stockId(), stock.units(), stock.sellerId());
+    }
+
+    @ApplicationModuleListener
+    void handle(AddStock stock) {
+        stockService.addStock(stock.stockId(), stock.units(), stock.sellerId());
     }
 }
