@@ -12,6 +12,8 @@ interface AddressRepository extends JpaRepository<Address, Long> {
     @Query("SELECT COUNT(*) FROM Address a WHERE a.appUserId = :appUserId")
     int countByAppUserId(@Param("appUserId") Long appUserId);
 
+    boolean existsByAddressIdAndAppUserId(Long addressId, Long appUserId);
+
     Optional<Address> findByAddressIdAndAppUserId(Long addressId, Long appUserId);
 
     @Query("SELECT a FROM Address a WHERE a.isDefault = true AND a.appUserId = :appUserId")

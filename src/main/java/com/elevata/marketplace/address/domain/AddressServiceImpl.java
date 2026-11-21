@@ -78,10 +78,9 @@ class AddressServiceImpl implements AddressService {
             }
 
             if (updateRequest.isDefault() != null && updateRequest.isDefault()) {
-                //What will happen if there isn't a default address?
-                log.info("[Inside update default if]");
                 handleDefaultAddress(address.getAppUserId());
                 address.setDefault(true);
+                log.info("[Default address updated] From the Address service");
                 isUpdated = true;
             }
 
@@ -112,6 +111,15 @@ class AddressServiceImpl implements AddressService {
         return addressRepository.getDefaultAddressByCustomerId(customerId)
                 .map(Address::getAddressId)
                 .orElseThrow(() -> new AddressNotFoundException("Default address not found."));
+    }
+
+    @Override
+    public boolean verifyAddressForCustomer(Long customerId, Long addressId) {
+        if (!addressRepository.existsByAddressIdAndAppUserId(addressId, customerId)) {
+            throw new AddressNotFoundException("Invalid address id " + addressId);
+        }
+
+        return true;
     }
 
     private void handleDefaultAddress(Long appUserId) {

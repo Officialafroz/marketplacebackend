@@ -15,4 +15,6 @@ public interface AddressService {
     AddressResponse findById(Long addressId);
 
     Long getDefaultAddressByCustomerId(Long customerId);
+
+    boolean verifyAddressForCustomer(Long customerId, Long addressId);
 }
