@@ -1,4 +1,4 @@
 package com.elevata.marketplace.stock;
 
-public record StockUnitsUpdate(Long stockId, Integer units){
+public record AddStock(Long stockId, Integer units, Long sellerId){
 }
