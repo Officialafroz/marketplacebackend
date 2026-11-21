@@ -2,9 +2,8 @@ package com.elevata.marketplace.catalogs.eventhandlers;
 
 import com.elevata.marketplace.catalogs.CatalogService;
 import com.elevata.marketplace.stock.StockResponse;
-import com.elevata.marketplace.stock.StockStatus;
-import com.elevata.marketplace.stock.StockUnitsUpdate;
-import com.elevata.marketplace.stock.StockUpdate;
+import com.elevata.marketplace.stock.AddStock;
+import com.elevata.marketplace.stock.CatalogUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.modulith.events.ApplicationModuleListener;
@@ -27,13 +26,8 @@ class CatalogEventHandler {
     }
 
     @ApplicationModuleListener
-    void handle(StockUpdate stockUpdate) {
+    void handle(CatalogUpdate catalogUpdate) {
         log.info("[From the catalog event handler] update event called");
-        catalogService.updateUnitsOrStatus(stockUpdate);
-    }
-
-    @ApplicationModuleListener
-    void handle(StockUnitsUpdate stock) {
-        catalogService.updateUnits(stock.stockId(), stock.units());
+        catalogService.updateStock(catalogUpdate);
     }
 }
