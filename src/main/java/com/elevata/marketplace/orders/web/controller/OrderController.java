@@ -29,6 +29,7 @@ class OrderController {
         return orderService.findAllActive();
     }
 
+    /// Ensure canceled ordered cannot be used again
     @PostMapping("cancel/{orderId}")
     ResponseEntity<OrderResponse> cancel(@PathVariable Long orderId) {
         return orderService.cancel(orderId);
