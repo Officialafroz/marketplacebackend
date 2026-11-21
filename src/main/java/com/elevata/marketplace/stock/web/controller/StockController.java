@@ -4,13 +4,17 @@ import com.elevata.marketplace.stock.StockResponse;
 import com.elevata.marketplace.stock.StockService;
 import com.elevata.marketplace.stock.domain.AddStockForProduct;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/seller/stock")
+@Validated
 class StockController {
     private final StockService stockService;
 
@@ -25,16 +29,15 @@ class StockController {
     }
 
     @GetMapping("page/{pageNumber}")
-    ResponseEntity<Page<StockResponse>> getProductStock(@PathVariable int pageNumber) {
-        return stockService.getProductStock(pageNumber);
+    ResponseEntity<Page<StockResponse>> getProductStockForCustomer(@PathVariable int pageNumber) {
+        return stockService.getProductStockForCustomer(pageNumber);
     }
 
     @PatchMapping("{stockId}")
-    ResponseEntity<StockResponse> updateUnitsOrStatus(
+    ResponseEntity<StockResponse> addStock(
             @PathVariable Long stockId,
-            @RequestParam(required = false) Integer units,
-            @RequestParam(required = false) String status
+            @RequestParam @NotNull @PositiveOrZero Integer units
     ) {
-        return stockService.updateUnitsOrStatus(stockId, units, status);
+        return stockService.addStock(stockId, units);
     }
 }

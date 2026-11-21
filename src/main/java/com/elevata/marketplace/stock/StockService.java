@@ -1,7 +1,6 @@
 package com.elevata.marketplace.stock;
 
 import com.elevata.marketplace.stock.domain.AddStockForProduct;
-import org.jspecify.annotations.Nullable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -10,11 +9,13 @@ import org.springframework.stereotype.Service;
 public interface StockService {
     ResponseEntity<StockResponse> add(AddStockForProduct stock);
 
-    ResponseEntity<Page<StockResponse>> getProductStock(int pageNumber);
+    ResponseEntity<Page<StockResponse>> getProductStockForCustomer(int pageNumber);
 
-    ResponseEntity<StockResponse> updateUnitsOrStatus(Long stockId, @Nullable Integer units, @Nullable String status);
+    StockResponse addStock(Long stockId, Integer units, Long sellerId);
 
-    void updateUnits(Long stockId, Integer units);
+    ResponseEntity<StockResponse> addStock(Long stockId, Integer units);
+
+    void reduceStock(Long stockId, Integer units, Long sellerId);
 
     Page<StockResponse> getAvailableStock(int pageNumber, int catalogPageSize);
 }
