@@ -4,7 +4,6 @@ import com.elevata.marketplace.carts.CartOrderRequest;
 import com.elevata.marketplace.carts.CartRequest;
 import com.elevata.marketplace.carts.CartResponse;
 import com.elevata.marketplace.catalogs.CatalogOrderResponse;
-import com.elevata.marketplace.catalogs.CatalogResponse;
 
 import java.math.BigDecimal;
 
