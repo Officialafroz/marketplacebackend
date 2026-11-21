@@ -33,6 +33,7 @@ build/
 .vscode/
 
 src/main/resources/application.yaml
+src/main/resources/application-test.yaml
 
 # Logs and System Files
 *.log
