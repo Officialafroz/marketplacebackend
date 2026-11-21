@@ -36,9 +36,11 @@ interface CatalogRepository extends JpaRepository<Catalog, Long> {
 
     @Query("""
         SELECT new com.elevata.marketplace.catalogs.CatalogOrderInfo(
-            c.units, c.price, c.stockId
+            c.units, c.price, c.stockId, c.stockStatus, c.sellerId
         ) FROM Catalog c
         WHERE c.catalogId = :catalogId
     """)
     Optional<CatalogOrderInfo> getCatalogOrderInfo(@Param("catalogId") Long catalogId);
+
+    Optional<Catalog> findBySellerIdAndStockId(Long sellerId, Long stockId);
 }

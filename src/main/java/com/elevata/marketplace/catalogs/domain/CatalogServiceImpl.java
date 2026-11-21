@@ -1,18 +1,14 @@
 package com.elevata.marketplace.catalogs.domain;
 
-import com.elevata.marketplace.catalogs.CatalogOrderInfo;
-import com.elevata.marketplace.catalogs.CatalogOrderResponse;
-import com.elevata.marketplace.catalogs.CatalogResponse;
-import com.elevata.marketplace.catalogs.CatalogService;
+import com.elevata.marketplace.catalogs.*;
 import com.elevata.marketplace.product.ProductResponse;
 import com.elevata.marketplace.product.ProductService;
 import com.elevata.marketplace.stock.StockResponse;
-import com.elevata.marketplace.stock.StockService;
-import com.elevata.marketplace.stock.StockStatus;
-import com.elevata.marketplace.stock.StockUpdate;
+import com.elevata.marketplace.stock.CatalogUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -23,15 +19,15 @@ import org.springframework.transaction.annotation.Transactional;
 class CatalogServiceImpl implements CatalogService {
     private static final int CATALOG_PAGE_SIZE = 50;
     private static final Logger log = LoggerFactory.getLogger(CatalogServiceImpl.class);
-    private final StockService stockService;
     private final ProductService productService;
     private final CatalogRepository catalogRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    public CatalogServiceImpl(StockService stockService, ProductService productService, CatalogRepository catalogRepository) {
-        this.stockService = stockService;
+    public CatalogServiceImpl(ProductService productService, CatalogRepository catalogRepository, ApplicationEventPublisher eventPublisher) {
         this.productService = productService;
         this.catalogRepository = catalogRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -49,38 +45,6 @@ class CatalogServiceImpl implements CatalogService {
         Catalog catalog = CatalogMapper.toEntity(productResponse, stockResponse);
         catalogRepository.save(catalog);
         log.info("[Catalog has been saved]: Catalog created");
-    }
-
-    @Override
-    @Transactional
-    public void updateUnitsOrStatus(StockUpdate stockUpdate) {
-        Catalog catalog = catalogRepository.findByStockId(stockUpdate.stockId())
-                .orElseThrow(() -> new CatalogNotFoundException("Catalog not found for stock id " 
-                        + stockUpdate.stockId()));
-
-        boolean isUpdated = false;
-        StockStatus stockStatus = null;
-
-        if (stockUpdate.units() != null && stockUpdate.units() > 0) {
-            int updatedUnits = catalog.getUnits() + stockUpdate.units();
-            catalog.setUnits(updatedUnits);
-            isUpdated = true;
-        }
-
-        if (stockStatus != null && (StockStatus.OUT_OF_STOCK.equals(stockUpdate.stockStatus())
-                || StockStatus.AVAILABLE.equals(stockUpdate.stockStatus())
-                || StockStatus.EXPIRED.equals(stockUpdate.stockStatus()))
-        ) {
-            catalog.setStockStatus(stockStatus);
-            isUpdated = true;
-        }
-
-        if (!isUpdated) {
-            throw new RuntimeException("At least 1 field is required");
-        }
-
-        catalogRepository.save(catalog);
-        log.info("Catalog stock status: {}", stockUpdate.stockStatus());
     }
 
     @Override
@@ -104,25 +68,22 @@ class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    @Transactional
-    public void updateUnits(Long stockId, Integer units) {
-        Catalog catalog = catalogRepository.findByStockId(stockId)
-                .orElseThrow(() -> new CatalogNotFoundException("Catalog not found for stock id "
-                        + stockId));
+    public void updateStock(CatalogUpdate catalogUpdate) {
+        Catalog catalog = catalogRepository.findBySellerIdAndStockId(
+                catalogUpdate.sellerId(), catalogUpdate.stockId())
+                .orElseThrow(() -> new CatalogNotFoundException("Catalog not found"));
 
-        boolean isUpdated = false;
+        catalog.setUnits(catalogUpdate.units());
 
-        if (units != null && units > 0) {
-            catalog.setUnits(units);
-            isUpdated = true;
+        if (catalogUpdate.isStatusUpdated() && catalogUpdate.stockStatus() != null) {
+            catalog.setStockStatus(catalogUpdate.stockStatus());
         }
 
-        if (!isUpdated) {
-            throw new RuntimeException("At least 1 field is required");
-        }
+        catalog = catalogRepository.save(catalog);
+        eventPublisher.publishEvent(new VerifyCartStock(catalog.getCatalogId(),
+                catalog.getUnits()));
 
-        catalogRepository.save(catalog);
-        log.info("Catalog units updated: {}", units);
+        log.info("Catalog units updated: {}", catalog.getUnits());
     }
 
     @Override
