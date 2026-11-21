@@ -1,6 +1,7 @@
 package com.elevata.marketplace.orders.web;
 
 import com.elevata.marketplace.commons.ErrorResponse;
+import com.elevata.marketplace.orders.domain.InvalidQuantityException;
 import com.elevata.marketplace.orders.domain.OrderNotFoundException;
 import com.elevata.marketplace.orders.domain.OrderQuantityLimitReachedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,6 +19,11 @@ class OrderExceptionHandler {
 
     @ExceptionHandler(OrderNotFoundException.class)
     ErrorResponse handleOrderNotFoundError(OrderNotFoundException e) {
+        return new ErrorResponse(e.getMessage(), LocalDateTime.now());
+    }
+
+    @ExceptionHandler(InvalidQuantityException.class)
+    ErrorResponse handleInvalidQuantityError(InvalidQuantityException e) {
         return new ErrorResponse(e.getMessage(), LocalDateTime.now());
     }
 }
