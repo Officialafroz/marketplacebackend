@@ -34,26 +34,35 @@ class AppUserServiceImpl implements AppUserService {
 
     @Override
     public boolean validateUser(String email) {
-        return appUserRepository.existsByEmail(email);
+        if (isNotNull(email)) return appUserRepository.existsByEmail(email);
+        throw new IllegalArgumentException("Email must not be null.");
     }
 
     @Override
     public boolean validateById(Long id) {
-        return appUserRepository.existsById(id);
+        if (id != null && id > 0) return appUserRepository.existsById(id);
+        throw new IllegalArgumentException("Id must be greater than 0.");
     }
 
     @Override
     public Long getIdByEmail(String email) {
-        return appUserRepository.getIdByEmail(email);
+        if (isNotNull(email)) return appUserRepository.getIdByEmail(email);
+        throw new IllegalArgumentException("Email must not be null.");
     }
 
     @Override
     public AppUserDto findByEmail(String email) {
-        return appUserRepository.findByEmail(email);
+        if (isNotNull(email)) return appUserRepository.findByEmail(email);
+        throw new IllegalArgumentException("Email must not be null.");
     }
 
     @Override
     public AppUserDto findById(long id) {
-        return appUserRepository.findByAppUserId(id);
+        if (id > 0) return appUserRepository.findByAppUserId(id);
+        throw new IllegalArgumentException("Id must be greater than 0.");
+    }
+
+    private boolean isNotNull(String value) {
+        return value != null;
     }
 }
