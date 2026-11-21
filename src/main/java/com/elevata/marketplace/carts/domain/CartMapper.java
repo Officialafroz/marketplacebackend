@@ -10,20 +10,23 @@ import java.math.BigDecimal;
 
 class CartMapper {
     static Cart toEntity(CartRequest cartRequest, BigDecimal totalPrice,
-                         Long customerId, CartStatus cartStatus
+                         Long customerId, CartStatus cartStatus, boolean inStock
     ) {
         return new Cart(cartRequest.catalogId(),
                 cartRequest.quantity(),
                 totalPrice,
                 cartStatus,
+                inStock,
                 customerId);
     }
 
     static CartResponse toDto(Cart cart, CatalogOrderResponse catalogOrderResponse) {
-        return new CartResponse(catalogOrderResponse,
+        return new CartResponse(cart.getCartId(),
+                catalogOrderResponse,
                 cart.getQuantity(),
                 cart.getTotalPrice(),
                 cart.getCartStatus(),
+                cart.isInStock(),
                 cart.getCustomerId());
     }
 

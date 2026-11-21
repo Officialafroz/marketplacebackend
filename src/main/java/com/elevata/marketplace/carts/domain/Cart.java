@@ -19,6 +19,7 @@ class Cart {
 
     @Enumerated(EnumType.STRING)
     private CartStatus cartStatus;
+    private boolean inStock;
     private Long customerId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -26,11 +27,12 @@ class Cart {
     public Cart() {
     }
 
-    public Cart(Long catalogId, int quantity, BigDecimal totalPrice, CartStatus cartStatus, Long customerId) {
+    public Cart(Long catalogId, int quantity, BigDecimal totalPrice, CartStatus cartStatus, boolean inStock, Long customerId) {
         this.catalogId = catalogId;
         this.quantity = quantity;
         this.totalPrice = totalPrice;
         this.cartStatus = cartStatus;
+        this.inStock = inStock;
         this.customerId = customerId;
     }
 
@@ -76,5 +78,13 @@ class Cart {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public boolean isInStock() {
+        return inStock;
+    }
+
+    public void setInStock(boolean inStock) {
+        this.inStock = inStock;
     }
 }

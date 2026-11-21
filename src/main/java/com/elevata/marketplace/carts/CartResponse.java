@@ -6,10 +6,12 @@ import com.elevata.marketplace.catalogs.CatalogOrderResponse;
 import java.math.BigDecimal;
 
 public record CartResponse(
+        Long cartId,
         CatalogOrderResponse catalogOrderResponse,
         int quantity,
         BigDecimal totalPrice,
         CartStatus cartStatus,
+        Boolean isAvailable,
         Long customerId
 ) {
 }

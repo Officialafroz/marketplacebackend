@@ -17,11 +17,12 @@ final class StockMapper {
                 s.getUpdatedAt());
     }
 
-    static Stock toEntity(AddStockForProduct stock) {
+    static Stock toEntity(Long sellerId, AddStockForProduct stock) {
         return new Stock(stock.units(),
                 stock.price(),
                 stock.manufacturingDate(),
                 stock.expiryDate(),
-                stock.productId());
+                stock.productId(),
+                sellerId);
     }
 }

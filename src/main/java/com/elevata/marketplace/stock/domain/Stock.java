@@ -22,6 +22,7 @@ class Stock {
     @Enumerated(EnumType.STRING)
     private StockStatus stockStatus;
     private Long productId;
+    private Long sellerId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -32,12 +33,13 @@ class Stock {
                  BigDecimal price,
                  LocalDate manufacturingDate,
                  LocalDate expiryDate,
-                 Long productId) {
+                 Long productId, Long sellerId) {
         this.units = units;
         this.price = price;
         this.manufacturingDate = manufacturingDate;
         this.expiryDate = expiryDate;
         this.productId = productId;
+        this.sellerId = sellerId;
     }
 
     public Long getStockId() {
@@ -82,5 +84,9 @@ class Stock {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public Long getSellerId() {
+        return sellerId;
     }
 }

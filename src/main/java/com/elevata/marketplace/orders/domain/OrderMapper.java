@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 
 class OrderMapper {
 
-    static Order toEntity(OrderRequest orderRequest, Long id, BigDecimal totalPrice, OrderStatus orderStatus) {
+    static Order toEntity(OrderRequest orderRequest, Long addressId, Long id, BigDecimal totalPrice, OrderStatus orderStatus) {
         return new Order(orderRequest.catalogId(),
-                orderRequest.addressId(),
+                addressId,
                 orderRequest.quantity(),
                 totalPrice,
                 PaymentOption.valueOf(orderRequest.paymentOption().toUpperCase()),
