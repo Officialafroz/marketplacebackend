@@ -7,10 +7,13 @@ import com.elevata.marketplace.carts.CartOrderRequest;
 import com.elevata.marketplace.catalogs.CatalogOrderInfo;
 import com.elevata.marketplace.catalogs.CatalogOrderResponse;
 import com.elevata.marketplace.catalogs.CatalogService;
+import com.elevata.marketplace.commons.exceptions.OutOfStockException;
 import com.elevata.marketplace.orders.OrderResponse;
 import com.elevata.marketplace.orders.OrderService;
 import com.elevata.marketplace.security.CurrentUser;
-import com.elevata.marketplace.stock.StockUnitsUpdate;
+import com.elevata.marketplace.stock.ReduceStock;
+import com.elevata.marketplace.stock.AddStock;
+import com.elevata.marketplace.stock.StockStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -44,37 +47,27 @@ class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public ResponseEntity<OrderResponse> save(OrderRequest orderRequest) {
-        Long id = currentUser.id();
-        CatalogOrderInfo catalogOrderInfo = catalogService.getCatalogOrderInfo(orderRequest.catalogId());
-        //Make sure we have the stock
-        if (orderRequest.quantity() > catalogOrderInfo.quantity()) {
-            throw new OrderQuantityLimitReachedException("Quantity is above the stock!");
-        }
+        Long customerId = currentUser.id();
+        addressService.verifyAddressForCustomer(customerId, orderRequest.addressId());
 
-        //Calculate the total price as per the quantity
-        BigDecimal totalPrice = catalogOrderInfo.price().multiply(BigDecimal
-                .valueOf(orderRequest.quantity()));
+        Order order = createOrder(orderRequest.catalogId(),
+                orderRequest.addressId(),
+                orderRequest.quantity(),
+                orderRequest.paymentOption(),
+                customerId);
 
-        Order order = OrderMapper.toEntity(orderRequest, id, totalPrice, OrderStatus.PLACED);
-        order = orderRepository.save(order);
-
-        //Update the stock
-        int updatedQuantity = catalogOrderInfo.quantity() - orderRequest.quantity();
-        eventPublisher.publishEvent(new StockUnitsUpdate(catalogOrderInfo.stockId(),
-                updatedQuantity));
-
-        log.info("[From the order service] order created info: {}", orderRequest);
-        OrderResponse orderResponse = makeDto(order);
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(makeDto(order));
     }
 
-    //Canceled ordered cannot be used again
+    /// Canceled ordered cannot be used again
     @Override
     @Transactional
     public ResponseEntity<OrderResponse> cancel(Long orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Invalid order id " + orderId));
-        OrderResponse orderResponse = null;
+        Long customerId = currentUser.id();
+        Order order = orderRepository.findByCustomerIdAndOrderId(customerId, orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Invalid order id "
+                        + orderId));
+        OrderResponse orderResponse;
 
         if (order.getOrderStatus().equals(OrderStatus.CANCELED)) {
             orderResponse = makeDto(order);
@@ -83,10 +76,12 @@ class OrderServiceImpl implements OrderService {
         order.setOrderStatus(OrderStatus.CANCELED);
         orderRepository.save(order);
 
-        // Update the stock
-        CatalogOrderInfo catalogOrderInfo = catalogService.getCatalogOrderInfo(order.getCatalogId());
-        int updatedQuantity = order.getQuantity() + catalogOrderInfo.quantity();
-        eventPublisher.publishEvent(new StockUnitsUpdate(catalogOrderInfo.stockId(), updatedQuantity));
+        // Updates the stock
+        CatalogOrderInfo catalogOrderInfo = catalogService
+                .getCatalogOrderInfo(order.getCatalogId());
+        eventPublisher.publishEvent(new AddStock(catalogOrderInfo.stockId(),
+                order.getQuantity(),
+                catalogOrderInfo.sellerId()));
 
         /*
             Add handling of payment when the order is canceled
@@ -98,33 +93,17 @@ class OrderServiceImpl implements OrderService {
 
     @Override
     public void cartToOrder(CartOrderRequest cartOrderRequest) {
-        CatalogOrderInfo catalogOrderInfo = catalogService
-                .getCatalogOrderInfo(cartOrderRequest
-                        .catalogOrderResponse().catalogId());
-        //Make sure we have the stock
-        if (cartOrderRequest.quantity() > catalogOrderInfo.quantity()) {
-            throw new OrderQuantityLimitReachedException("Quantity is above the stock!");
-        }
+        Long customerId = currentUser.id();
 
-        Long addressId = addressService
-                .getDefaultAddressByCustomerId(cartOrderRequest.customerId());
-        OrderRequest orderRequest = new OrderRequest(cartOrderRequest
-                .catalogOrderResponse().catalogId(),
+        //Address must not be default, option to choose should be present.
+        Long addressId = addressService.getDefaultAddressByCustomerId(customerId);
+        Order order = createOrder(cartOrderRequest.catalogOrderResponse().catalogId(),
                 addressId,
                 cartOrderRequest.quantity(),
-                PaymentOption.CASH_ON_DELIVERY.name());
+                PaymentOption.CASH_ON_DELIVERY.name(),
+                customerId);
 
-        Order order = OrderMapper.toEntity(orderRequest, cartOrderRequest.customerId(),
-                cartOrderRequest.totalPrice(), OrderStatus.PLACED);
-
-        orderRepository.save(order);
-
-        //Update the stock
-        int updatedQuantity = catalogOrderInfo.quantity() - orderRequest.quantity();
-        eventPublisher.publishEvent(new StockUnitsUpdate(catalogOrderInfo.stockId(),
-                updatedQuantity));
-
-        log.info("[From the order service] cart order created info: {}", cartOrderRequest);
+        log.info("[From the order service] cart order created info: {}", order.getOrderId());
     }
 
     @Override
@@ -139,9 +118,9 @@ class OrderServiceImpl implements OrderService {
 
     @Override
     public ResponseEntity<List<OrderResponse>> findAllActive() {
-        Long id = currentUser.id();
-        List<Order> orders = orderRepository.findAllByCustomerIdAndOrderStatus(id,
-                OrderStatus.PLACED);
+        Long customerId = currentUser.id();
+        List<Order> orders = orderRepository
+                .findAllByCustomerIdAndOrderStatus(customerId, OrderStatus.PLACED);
         List<OrderResponse> orderResponses = new ArrayList<>(orders.size());
 
         orders.forEach(order -> orderResponses.add(makeDto(order)));
@@ -154,5 +133,47 @@ class OrderServiceImpl implements OrderService {
         CatalogOrderResponse catalogOrderResponse = catalogService
                 .getCatalogOrderResponse(order.getCatalogId());
         return OrderMapper.toDto(order, addressResponse, catalogOrderResponse);
+    }
+
+    private Order createOrder(Long catalogId, Long addressId, int quantity,
+                              String paymentOption, Long customerId
+    ) {
+        CatalogOrderInfo catalogOrderInfo =
+                catalogService.getCatalogOrderInfo(catalogId);
+        StockStatus stockStatus = catalogOrderInfo.stockStatus();
+
+        // Validates stock availability
+        if (stockStatus == StockStatus.OUT_OF_STOCK
+            || stockStatus == StockStatus.EXPIRED
+        ) {
+            throw new OutOfStockException("Cannot create order. Stock unavailable.");
+        }
+
+        if (quantity <= 0 || quantity > catalogOrderInfo.quantity()) {
+            throw new InvalidQuantityException("Invalid quantity value.");
+        }
+
+        // Validates address ownership
+        addressService.verifyAddressForCustomer(customerId, addressId);
+
+        // Calculates total price
+        BigDecimal totalPrice = catalogOrderInfo.price()
+                .multiply(BigDecimal.valueOf(quantity));
+
+        OrderRequest orderRequest = new OrderRequest(catalogId, addressId,
+                quantity, paymentOption);
+
+        Order order = OrderMapper.toEntity(orderRequest, addressId,
+                customerId, totalPrice, OrderStatus.PLACED);
+
+        order = orderRepository.save(order);
+
+        eventPublisher.publishEvent(
+                new ReduceStock(catalogOrderInfo.stockId(), quantity,
+                        catalogOrderInfo.sellerId()));
+
+        log.info("Order created: {}", order.getOrderId());
+
+        return order;
     }
 }
