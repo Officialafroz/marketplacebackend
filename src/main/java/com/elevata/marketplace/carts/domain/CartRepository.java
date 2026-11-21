@@ -13,4 +13,18 @@ interface CartRepository extends JpaRepository<Cart, Long> {
 
     @Query("SELECT c FROM Cart c WHERE c.customerId = :customerId AND c.cartStatus = 'CART'")
     Optional<List<Cart>> findAllActiveByCustomerId(@Param("customerId") Long customerId);
+
+    @Query("""
+        SELECT c
+        FROM Cart c
+        WHERE c.customerId = :customerId AND c.catalogId = :catalogId AND c.cartStatus = 'CART'
+    """)
+    Optional<Cart> findActiveByCustomerIdAndCatalogId(@Param("customerId") Long customerId,
+                                                      @Param("catalogId") Long catalogId);
+
+    boolean existsByCustomerIdAndCatalogIdAndCartStatus(Long customerId,
+                                                        Long catalogId,
+                                                        CartStatus cartStatus);
+
+    Optional<Cart> findByCustomerIdAndCartId(Long customerId, Long cartId);
 }
