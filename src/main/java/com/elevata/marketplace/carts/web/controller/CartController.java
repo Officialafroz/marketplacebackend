@@ -27,8 +27,8 @@ class CartController {
     }
 
     @GetMapping("list/active")
-    ResponseEntity<List<CartResponse>> findAll() {
-        return cartService.findAllActive();
+    ResponseEntity<List<CartResponse>> fetchAllActiveCustomerCarts() {
+        return cartService.fetchAllActiveCustomerCarts();
     }
 
     @PostMapping("remove/{cartId}")
