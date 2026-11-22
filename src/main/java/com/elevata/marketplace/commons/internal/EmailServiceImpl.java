@@ -1,6 +1,8 @@
 package com.elevata.marketplace.commons.internal;
 
 import com.elevata.marketplace.commons.EmailService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 class EmailServiceImpl implements EmailService {
+    private static final Logger log = LoggerFactory.getLogger(EmailServiceImpl.class);
     private final JavaMailSender javaMailSender;
 
     @Autowired
@@ -26,5 +29,6 @@ class EmailServiceImpl implements EmailService {
         message.setText(text);
 
         javaMailSender.send(message);
+        log.info("Email send to {} ", to);
     }
 }
