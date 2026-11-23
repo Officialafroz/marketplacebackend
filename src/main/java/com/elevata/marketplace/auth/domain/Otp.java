@@ -48,4 +48,15 @@ class Otp {
     public Long getAppUserId() {
         return appUserId;
     }
+
+    @Override
+    public String toString() {
+        return "Otp{" +
+                "otpId=" + otpId +
+                ", otpValue='" + otpValue + '\'' +
+                ", appUserId=" + appUserId +
+                ", expiresAt=" + expiresAt +
+                ", createdAt=" + createdAt +
+                '}';
+    }
 }
