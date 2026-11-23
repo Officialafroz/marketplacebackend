@@ -2,12 +2,17 @@ package com.elevata.marketplace.auth.domain;
 
 import com.elevata.marketplace.commons.EmailService;
 import com.elevata.marketplace.user.domain.UserNotFoundException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.modulith.test.ApplicationModuleTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ApplicationModuleTest(
         mode = ApplicationModuleTest.BootstrapMode.DIRECT_DEPENDENCIES
@@ -20,6 +25,9 @@ class OtpServiceImplTest {
     @Autowired
     private OtpService otpService;
 
+    @Autowired
+    private PasswordEncoder encoder;
+
     @MockitoBean
     private EmailService emailService;
 
@@ -27,27 +35,42 @@ class OtpServiceImplTest {
         Mock the email service
 
         ###Create
-        1. For invalid user
-        2. validate expired OTP
-        3. Verify the rawOtp's length is 6 and does not contain alphabets
+        done 1. For invalid user (email, null) and valid email
+        done - What if appUserId is null (null is handled by AppUserService) ?
+        done 2. validate existence (verify return message), expired OTP (verify expired otp is deleted)
         4. Verify encoding is done successfully
-        5. Verify Otp is saved successfully
         6. Verify email is sent
-        7. assert otp generation message
+        done 7. assert otp generation message
      */
 
     @Test
-    void shouldThrowExceptionOnUnRegisteredEmailForCreate() {
+    void shouldThrowExceptionOnUnRegisteredEmailAndNullForCreate() {
         assertThrows(UserNotFoundException.class, () -> otpService.create("testp@gmail.com"));
         assertThrows(IllegalArgumentException.class, () -> otpService.create(null));
     }
 
+    @Disabled
+    @Test
+    void verifyIdForValidEmailForCreate() {
+        String expected = "Otp generated for email test1@gmail.com";
+
+        assertEquals(expected, otpService.create("test1@gmail.com"));
+
+        ArgumentCaptor<Otp> captor = ArgumentCaptor.forClass(Otp.class);
+        verify(otpRepository, times(1)).save(captor.capture());
+
+        Otp otp = captor.getValue();
+
+        assertEquals(10L, otp.getAppUserId());
+    }
+
     @Test
     void shouldGenerateOtpForValidEmailForCreate() {
-        String expected = "Otp generated for email lergapp@gmail.com";
+        String email = "test1@gmail.com";
+        String expected = "Otp generated for email " + email;
 
-        assertEquals(expected, otpService.create("lergapp@gmail.com"));
-        assertNotEquals(expected, otpService.create("lergapp@gmail.com"));
+        assertEquals(expected, otpService.create(email));
+        assertNotEquals(expected, otpService.create(email));
     }
 
     /*
