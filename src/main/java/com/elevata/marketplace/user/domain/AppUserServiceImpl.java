@@ -46,7 +46,8 @@ class AppUserServiceImpl implements AppUserService {
 
     @Override
     public Long getIdByEmail(String email) {
-        if (isNotNull(email)) return appUserRepository.getIdByEmail(email);
+        if (isNotNull(email)) return appUserRepository.getIdByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User is not registered for email"));
         throw new IllegalArgumentException("Email must not be null.");
     }
 

@@ -6,12 +6,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 interface AppUserRepository extends JpaRepository<AppUser, Long> {
     boolean existsByEmail(String email);
 
     @Query("SELECT u.appUserId FROM AppUser u WHERE u.email = :email")
-    Long getIdByEmail(@Param("email") String email);
+    Optional<Long> getIdByEmail(@Param("email") String email);
 
     @Query("""
         SELECT new com.elevata.marketplace.user.AppUserDto(u.appUserId, u.role)
