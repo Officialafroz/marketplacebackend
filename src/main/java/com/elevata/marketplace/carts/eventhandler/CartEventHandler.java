@@ -11,7 +11,6 @@ public class CartEventHandler {
 
     private final CartService cartService;
 
-    @Autowired
     public CartEventHandler(CartService cartService) {
         this.cartService = cartService;
     }

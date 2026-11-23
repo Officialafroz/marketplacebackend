@@ -12,7 +12,6 @@ class OrderEventHandler {
 
     private final OrderService orderService;
 
-    @Autowired
     OrderEventHandler(OrderService orderService) {
         this.orderService = orderService;
     }

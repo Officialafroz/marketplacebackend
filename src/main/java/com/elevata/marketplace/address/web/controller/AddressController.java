@@ -16,7 +16,6 @@ class AddressController {
 
     private final AddressService addressService;
 
-    @Autowired
     AddressController(AddressService addressService) {
         this.addressService = addressService;
     }

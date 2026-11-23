@@ -16,7 +16,6 @@ class CartController {
 
     private final CartService cartService;
 
-    @Autowired
     CartController(CartService cartService) {
         this.cartService = cartService;
     }

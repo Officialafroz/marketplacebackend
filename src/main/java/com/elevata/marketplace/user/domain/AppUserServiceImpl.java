@@ -15,7 +15,6 @@ class AppUserServiceImpl implements AppUserService {
     private static final Logger log = LoggerFactory.getLogger(AppUserServiceImpl.class);
     private final AppUserRepository appUserRepository;
 
-    @Autowired
     public AppUserServiceImpl(AppUserRepository appUserRepository) {
         this.appUserRepository = appUserRepository;
     }

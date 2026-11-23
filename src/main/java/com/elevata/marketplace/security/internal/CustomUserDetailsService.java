@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 public class CustomUserDetailsService implements UserDetailsService {
     private final AppUserService appUserService;
 
-    @Autowired
     public CustomUserDetailsService(AppUserService appUserService) {
         this.appUserService = appUserService;
     }

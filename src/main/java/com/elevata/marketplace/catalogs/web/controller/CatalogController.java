@@ -13,7 +13,6 @@ class CatalogController {
 
     private final CatalogService catalogService;
 
-    @Autowired
     CatalogController(CatalogService catalogService) {
         this.catalogService = catalogService;
     }

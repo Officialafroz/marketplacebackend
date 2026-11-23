@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 class StockController {
     private final StockService stockService;
 
-    @Autowired
     StockController(StockService stockService) {
         this.stockService = stockService;
     }

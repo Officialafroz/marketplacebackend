@@ -15,7 +15,6 @@ class ProductController {
 
     private final ProductService productService;
 
-    @Autowired
     ProductController(ProductService productService) {
         this.productService = productService;
     }

@@ -16,7 +16,6 @@ class LogoutController {
 
     private final LogoutService logoutService;
 
-    @Autowired
     LogoutController(LogoutService logoutService) {
         this.logoutService = logoutService;
     }
