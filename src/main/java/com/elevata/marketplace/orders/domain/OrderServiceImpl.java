@@ -16,6 +16,7 @@ import com.elevata.marketplace.stock.AddStock;
 import com.elevata.marketplace.stock.StockStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,7 @@ class OrderServiceImpl implements OrderService {
     private final CatalogService catalogService;
     private final ApplicationEventPublisher eventPublisher;
 
+    @Autowired
     public OrderServiceImpl(CurrentUser currentUser, OrderRepository orderRepository, AddressService addressService, CatalogService catalogService, ApplicationEventPublisher eventPublisher) {
         this.currentUser = currentUser;
         this.orderRepository = orderRepository;
