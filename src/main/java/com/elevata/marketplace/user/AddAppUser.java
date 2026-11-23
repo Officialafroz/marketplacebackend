@@ -1,6 +1,7 @@
 package com.elevata.marketplace.user;
 
 import com.elevata.marketplace.validations.ValidEmail;
+import com.elevata.marketplace.validations.ValidPhoneNumber;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -9,7 +10,7 @@ public record AddAppUser(
         String fullName,
         @NotNull @NotBlank @ValidEmail
         String email,
-//        @NotNull @NotBlank @ValidPhoneNumber
+        @NotNull @NotBlank @ValidPhoneNumber
         String phoneNumber,
         @NotNull @NotBlank
         String role
