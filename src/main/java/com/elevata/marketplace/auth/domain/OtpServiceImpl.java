@@ -63,15 +63,22 @@ class OtpServiceImpl implements OtpService {
     @Override
     public boolean verifyOtp(OtpRequest otpRequest) {
         Long appUserId = appUserService.getIdByEmail(otpRequest.email());
-        Otp otp = otpRepository.findByAppUserIdOrderByCreatedAtDesc(appUserId)
-                .orElseThrow(() -> new OtpNotFoundException("Invalid user email "
-                        + otpRequest.email()));
+        Optional<Otp> optionalOtp = otpRepository.findByAppUserIdOrderByCreatedAtDesc(appUserId);
 
-        if (otp.getExpiresAt().isAfter(now())) {
-            return passwordEncoder.matches(otpRequest.otpValue(),
-                    otp.getOtpValue());
+        if (optionalOtp.isPresent()) {
+            Otp otp = optionalOtp.get();
+            if (otp.getExpiresAt().isAfter(now())) {
+                return passwordEncoder.matches(otpRequest.otpValue(),
+                        otp.getOtpValue());
+            } else {
+                return false;
+            }
         }
 
-        return false;
+        /*
+            What if a user without using login endpoint triggers otp creation verify endpoint?
+         */
+        throw new OtpSessionNotFoundException(
+                "No active verification session found for this email.");
     }
 }
