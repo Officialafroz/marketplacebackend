@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .exceptionHandling(e -> e.authenticationEntryPoint(
                         new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .authorizeHttpRequests(a -> a
-                        .requestMatchers("/auth/**", "/").permitAll()
+                        .requestMatchers("/auth/**", "/", "/actuator/**").permitAll()
                         .requestMatchers("/api/seller/**").hasAuthority(AppUserRole.SELLER.name())
                         .requestMatchers("/api/customer/**").hasAuthority(AppUserRole.CUSTOMER.name())
                 .requestMatchers("/api/logout").hasAnyAuthority(AppUserRole.CUSTOMER.name(),
